@@ -3,7 +3,7 @@ services:
   nginx:
     build: ./nginx
     ports:
-      - '9005:80'
+      - '9006:80'
   mysql:
     image: mysql
     environment:
