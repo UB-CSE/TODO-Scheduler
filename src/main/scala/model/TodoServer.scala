@@ -30,7 +30,7 @@ class TodoServer() {
   server.addEventListener("add_task", classOf[String], new AddTaskListener(this))
   server.addEventListener("complete_task", classOf[String], new CompleteTaskListener(this))
   server.addEventListener("search_task", classOf[String], new SearchTaskListener(this))
-
+  server.addEventListener("show_All",classOf[Nothing], new ShowAllTasksListener(this))
   server.start()
 
   def tasksJSON(): String = {
@@ -103,6 +103,12 @@ class SearchTaskListener(server: TodoServer) extends DataListener[String]{
     val completeMatch:String=server.searchJSON(matching)
     client.sendEvent("all_tasks", completeMatch)
 
+  }
+}
+
+class ShowAllTasksListener(server: TodoServer) extends DataListener[Nothing]{
+  override def onData(client: SocketIOClient, data: Nothing, ackSender: AckRequest): Unit = {
+   client.sendEvent("all_tasks", server.tasksJSON())
   }
 }
 

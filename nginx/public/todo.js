@@ -34,6 +34,10 @@ function searchTask() {
     document.getElementById("desc").value = "";
 }
 
+function showAllTasks() {
+    socket.emit("show_All");
+}
+
 function completeTask(taskId) {
     socket.emit("complete_task", taskId);
 }
