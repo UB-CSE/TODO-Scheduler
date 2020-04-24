@@ -27,6 +27,13 @@ function addTask() {
     document.getElementById("desc").value = "";
 }
 
+function searchTask() {
+    let searchTerm = document.getElementById("title").value;
+    socket.emit("search_task", JSON.stringify({"search":searchTerm}));
+    document.getElementById("title").value = "";
+    document.getElementById("desc").value = "";
+}
+
 function completeTask(taskId) {
     socket.emit("complete_task", taskId);
 }
