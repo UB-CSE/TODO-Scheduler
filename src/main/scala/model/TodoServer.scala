@@ -29,13 +29,19 @@ class TodoServer() {
   server.addConnectListener(new ConnectionListener(this))
   server.addEventListener("add_task", classOf[String], new AddTaskListener(this))
   server.addEventListener("complete_task", classOf[String], new CompleteTaskListener(this))
-
+  server.addEventListener("search_task", classOf[String], new SearchTaskListener(this))
+  server.addEventListener("show_All",classOf[Nothing], new ShowAllTasksListener(this))
   server.start()
 
   def tasksJSON(): String = {
     val tasks: List[Task] = database.getTasks
     val tasksJSON: List[JsValue] = tasks.map((entry: Task) => entry.asJsValue())
     Json.stringify(Json.toJson(tasksJSON))
+  }
+
+  def searchJSON(filtered:List[Task]): String = {
+    val searchJSON: List[JsValue] = filtered.map((entry: Task) => entry.asJsValue())
+    Json.stringify(Json.toJson(searchJSON))
   }
 
   def setNextId(): Unit = {
@@ -86,4 +92,23 @@ class CompleteTaskListener(server: TodoServer) extends DataListener[String] {
 
 }
 
+
+class SearchTaskListener(server: TodoServer) extends DataListener[String]{
+
+  override def onData(client: SocketIOClient, searchTitle: String, ackSender: AckRequest): Unit = {
+    val toJS:JsValue=Json.parse(searchTitle)
+    val toSearch:String=(toJS \ "search").as[String]
+    val allTask:List[Task]=server.database.getTasks
+    val matching=allTask.filter(_.title.contains(toSearch))
+    val completeMatch:String=server.searchJSON(matching)
+    client.sendEvent("all_tasks", completeMatch)
+
+  }
+}
+
+class ShowAllTasksListener(server: TodoServer) extends DataListener[Nothing]{
+  override def onData(client: SocketIOClient, data: Nothing, ackSender: AckRequest): Unit = {
+   client.sendEvent("all_tasks", server.tasksJSON())
+  }
+}
 
