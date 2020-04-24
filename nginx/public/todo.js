@@ -9,10 +9,12 @@ function displayMessage(newMessage) {
 
 function displayTasks(tasksJSON) {
     const tasks = JSON.parse(tasksJSON);
+    //add special case for priority
     let formattedTasks = "";
     for (const task of tasks) {
+        let priority=""; if (task['priority']==="1"){priority="Low"}else if(task[priority]==="2"){priority="Medium"}else if(task[priority]==="3"){priority="High"}else{priority="None"};
         formattedTasks += "<hr/>";
-        formattedTasks += "<b>" + task['title'] + "</b> - " + task['description'] + task['date'] + "<br/>";
+        formattedTasks += "<b>" + task['title'] + "</b> - " + task['description'] + "<br/> Due: " + task['date'] + "&nbsp&nbspPriority:&nbsp" + priority + "<br/><br/>";
         formattedTasks += "<button onclick='completeTask(\"" + task['id'] + "\")'>Task Complete</button>";
     }
     document.getElementById("tasks").innerHTML = formattedTasks;
