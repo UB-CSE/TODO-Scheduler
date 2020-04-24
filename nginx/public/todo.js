@@ -13,7 +13,7 @@ function displayTasks(tasksJSON) {
     for (const task of tasks) {
         let priority=""; if (task['priority']==="1"){priority="Low"}else if(task[priority]==="2"){priority="Medium"}else if(task[priority]==="3"){priority="High"}else{priority="None"};
         formattedTasks += "<hr/>";
-        formattedTasks += "<b>" + task['title'] + "</b> - " + task['description'] + "<br/> Due: " + task['date'] + "&nbsp&nbspPriority:&nbsp" + priority + "<br/><br/>";
+        formattedTasks += "<b>" + task['title'] + "</b> - " + task['description'] + "<br/> Due: " + task['date'] + "  Priority: " + priority + "<br/><br/>";
         formattedTasks += "<button onclick='completeTask(\"" + task['id'] + "\")'>Task Complete</button>";
     }
     document.getElementById("tasks").innerHTML = formattedTasks;
@@ -29,7 +29,7 @@ function addTask() {
     document.getElementById("title").value = "";
     document.getElementById("desc").value = "";
     document.getElementById("datepicker").value = "";
-    document.getElementById("priority").value = "0"
+    document.getElementById("priority").value = "0";
 }
 
 function completeTask(taskId) {

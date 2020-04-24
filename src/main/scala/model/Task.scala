@@ -34,7 +34,7 @@ class Task(val title: String, val description: String, val date: String, val pri
       "title" -> Json.toJson(title),
       "description" -> Json.toJson(description),
       "date" -> Json.toJson(date),
-      "priority" -> Json.toJson(priority)
+      "priority" -> Json.toJson(priority),
       "id" -> Json.toJson(id)
     )
     Json.toJson(taskMap)

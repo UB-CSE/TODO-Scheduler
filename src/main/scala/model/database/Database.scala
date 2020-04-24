@@ -7,6 +7,7 @@ import model.Task
 
 class Database extends DatabaseAPI{
 
+  //val url = "jdbc:mysql://localhost:3306/mysql"
   val url = "jdbc:mysql://mysql/todo?autoReconnect=true"
   val username: String = sys.env("DB_USERNAME")
   val password: String = sys.env("DB_PASSWORD")
@@ -17,12 +18,12 @@ class Database extends DatabaseAPI{
 
   def setupTable(): Unit = {
     val statement = connection.createStatement()
-    statement.execute("CREATE TABLE IF NOT EXISTS tasks (title TEXT, description TEXT, id TEXT)")
+    statement.execute("CREATE TABLE IF NOT EXISTS tasks (title TEXT, description TEXT, dDate TEXT, priority TEXT, id TEXT);")
   }
 
 
   override def addTask(task: Task): Unit = {
-    val statement = connection.prepareStatement("INSERT INTO tasks VALUE (?, ?, ?, ?, ?)")
+    val statement = connection.prepareStatement("INSERT INTO tasks (title, description, dDate, priority, id) VALUES (?, ?, ?, ?, ?);")
 
     statement.setString(1, task.title)
     statement.setString(2, task.description)
@@ -35,7 +36,7 @@ class Database extends DatabaseAPI{
 
 
   override def completeTask(taskId: String): Unit = {
-    val statement = connection.prepareStatement("DELETE FROM tasks WHERE id=?")
+    val statement = connection.prepareStatement("DELETE FROM tasks WHERE id=?;")
 
     statement.setString(1, taskId)
 
@@ -44,7 +45,7 @@ class Database extends DatabaseAPI{
 
 
   override def getTasks: List[Task] = {
-    val statement = connection.prepareStatement("SELECT * FROM tasks")
+    val statement = connection.prepareStatement("SELECT * FROM tasks;")
     val result: ResultSet = statement.executeQuery()
 
     var tasks: List[Task] = List()
@@ -52,7 +53,7 @@ class Database extends DatabaseAPI{
     while (result.next()) {
       val title = result.getString("title")
       val description = result.getString("description")
-      val date = result.getString("date")
+      val date = result.getString("dDate")
       val priority = result.getString("priority")
       val id = result.getString("id")
       tasks = new Task(title, description, date, priority, id) :: tasks
