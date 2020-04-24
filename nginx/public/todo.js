@@ -9,7 +9,6 @@ function displayMessage(newMessage) {
 
 function displayTasks(tasksJSON) {
     const tasks = JSON.parse(tasksJSON);
-    //add special case for priority
     let formattedTasks = "";
     for (const task of tasks) {
         let priority=""; if (task['priority']==="1"){priority="Low"}else if(task[priority]==="2"){priority="Medium"}else if(task[priority]==="3"){priority="High"}else{priority="None"};
