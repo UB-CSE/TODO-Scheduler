@@ -2,6 +2,7 @@ const socket = io.connect("http://localhost:8080", {transports: ['websocket']});
 
 socket.on('all_tasks', displayTasks);
 socket.on('message', displayMessage);
+socket.on('failed', displayError)
 
 function displayMessage(newMessage) {
     document.getElementById("message").innerHTML = newMessage;
@@ -29,4 +30,19 @@ function addTask() {
 
 function completeTask(taskId) {
     socket.emit("complete_task", taskId);
+}
+
+function displayError() {
+    Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: "You can't have a blank task!",
+    })
+}
+
+function enterTask() {
+    if (event.keyCode === 13){
+        event.preventDefault();
+        addTask()
+    }
 }
