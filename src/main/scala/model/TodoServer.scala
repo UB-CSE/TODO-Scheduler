@@ -4,6 +4,7 @@ import com.corundumstudio.socketio.listener.{ConnectListener, DataListener}
 import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, SocketIOServer}
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
+import java.util.Calendar
 
 
 class TodoServer() {
@@ -70,7 +71,13 @@ class AddTaskListener(server: TodoServer) extends DataListener[String] {
     val title: String = (task \ "title").as[String]
     val description: String = (task \ "description").as[String]
 
-    server.database.addTask(Task(title, description))
+    var dT = Calendar.getInstance()
+    val curMin = dT.get(Calendar.MINUTE)
+    var curHour = dT.get(Calendar.HOUR)
+    val curSec = dT.get(Calendar.SECOND)
+    var time: String = curHour + ":" + curMin + ":" + curSec //Added time stamp to message
+
+    server.database.addTask(Task(title, description, time))
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
   }
 
