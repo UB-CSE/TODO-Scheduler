@@ -27,6 +27,7 @@ class Database extends DatabaseAPI{
     statement.setString(1, task.title)
     statement.setString(2, task.description)
     statement.setString(3, task.id)
+    statement.setString(4, task.dueDate)
 
     statement.execute()
   }
@@ -51,7 +52,9 @@ class Database extends DatabaseAPI{
       val title = result.getString("title")
       val description = result.getString("description")
       val id = result.getString("id")
-      tasks = new Task(title, description, id) :: tasks
+      val dueDate = result.getString("due")
+      println(dueDate)
+      tasks = new Task(title, description, id, dueDate) :: tasks
     }
 
     tasks.reverse
