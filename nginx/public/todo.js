@@ -5,6 +5,7 @@ socket.on('message', displayMessage);
 
 let myName = "";
 let named = false;
+let all = true;
 
 function displayMessage(newMessage) {
     document.getElementById("message").innerHTML = newMessage;
@@ -49,4 +50,18 @@ function addTask() {
 
 function completeTask(taskId) {
     socket.emit("complete_task", taskId);
+}
+
+function switchView() {
+    if (named){
+        if (all){
+            socket.emit("switch",myName);
+            all=false;
+        }
+        else{
+            socket.emit("switch","");
+            all=true
+        }
+
+    }
 }

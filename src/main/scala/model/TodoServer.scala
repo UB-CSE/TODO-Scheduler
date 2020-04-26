@@ -29,6 +29,7 @@ class TodoServer() {
   server.addConnectListener(new ConnectionListener(this))
   server.addEventListener("add_task", classOf[String], new AddTaskListener(this))
   server.addEventListener("complete_task", classOf[String], new CompleteTaskListener(this))
+  server.addEventListener("switch", classOf[String], new SwitchListener(this))
 
   server.start()
 
@@ -36,6 +37,13 @@ class TodoServer() {
     val tasks: List[Task] = database.getTasks
     val tasksJSON: List[JsValue] = tasks.map((entry: Task) => entry.asJsValue())
     Json.stringify(Json.toJson(tasksJSON))
+  }
+
+  def mytasksJSON(s:String): String = {
+    val tasks: List[Task] = database.switchView(s)
+    val tasksJSON: List[JsValue] = tasks.map((entry: Task) => entry.asJsValue())
+    Json.stringify(Json.toJson(tasksJSON))
+
   }
 
   def setNextId(): Unit = {
@@ -75,7 +83,6 @@ class AddTaskListener(server: TodoServer) extends DataListener[String] {
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
     //socket.sendEvent("all_tasks",server.tasksJSON())
   }
-
 }
 
 
@@ -89,4 +96,17 @@ class CompleteTaskListener(server: TodoServer) extends DataListener[String] {
 }
 
 
+class SwitchListener(server: TodoServer) extends DataListener[String] {
 
+  override def onData(socket: SocketIOClient, user: String, ackRequest: AckRequest): Unit = {
+    val addedBy:String = user
+    if (addedBy==""){
+      socket.sendEvent("all_tasks", server.tasksJSON())
+
+    }
+    else{
+      socket.sendEvent("all_tasks", server.mytasksJSON(user))
+    }
+
+  }
+}
