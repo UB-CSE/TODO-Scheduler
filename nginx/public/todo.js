@@ -12,7 +12,10 @@ function displayTasks(tasksJSON) {
     let formattedTasks = "";
     for (const task of tasks) {
         formattedTasks += "<hr/>";
-        formattedTasks += "<b>" + task['title'] + "</b> - " + task['description'] + "<br/>";
+
+        // The line below was changed to display the new information (date and time a task was added)
+        formattedTasks += "<b>" + task['title'] + "</b> - " + "<b>" + task['description'] + "</b> - " + task['time'] + "<br/>";
+
         formattedTasks += "<button onclick='completeTask(\"" + task['id'] + "\")'>Task Complete</button>";
     }
     document.getElementById("tasks").innerHTML = formattedTasks;
