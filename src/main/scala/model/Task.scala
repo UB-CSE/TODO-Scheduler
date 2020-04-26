@@ -36,7 +36,7 @@ class Task(val title: String, val description: String, val id: String) {
       "title" -> Json.toJson(title),
       "description" -> Json.toJson(description),
       "id" -> Json.toJson(id),
-      "time" -> Json.toJson(created.toString)
+      "time" -> Json.toJson(created.toString)     // contribution - date & time info
     )
     Json.toJson(taskMap)
   }
