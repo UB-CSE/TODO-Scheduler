@@ -1,7 +1,7 @@
 package model
 
 import play.api.libs.json.{JsValue, Json}
-
+import java.util.{Calendar, Date}     // Used for Contribution
 
 object Task {
 
@@ -28,14 +28,16 @@ object Task {
 }
 
 class Task(val title: String, val description: String, val id: String) {
+  // https://www.includehelp.com/scala/how-to-check-current-date-and-time-in-scala.aspx
+  val created: Date = Calendar.getInstance.getTime     // added as contribution - stores date and time task was added
 
   def asJsValue(): JsValue ={
     val taskMap: Map[String, JsValue] = Map(
       "title" -> Json.toJson(title),
       "description" -> Json.toJson(description),
-      "id" -> Json.toJson(id)
+      "id" -> Json.toJson(id),
+      "time" -> Json.toJson(created.toString)     // contribution - date & time info
     )
     Json.toJson(taskMap)
   }
-
 }
