@@ -1,5 +1,7 @@
 package model
 
+import java.util.regex.Pattern
+
 import com.corundumstudio.socketio.listener.{ConnectListener, DataListener}
 import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, SocketIOServer}
 import model.database.{Database, DatabaseAPI, TestingDatabase}
@@ -65,13 +67,21 @@ class ConnectionListener(server: TodoServer) extends ConnectListener {
 
 class AddTaskListener(server: TodoServer) extends DataListener[String] {
 
+  /**
+   * Added val hours:Double = (task \ "hours").as[Double] and double pattern check
+   */
   override def onData(socket: SocketIOClient, taskJSON: String, ackRequest: AckRequest): Unit = {
     val task: JsValue = Json.parse(taskJSON)
     val title: String = (task \ "title").as[String]
     val description: String = (task \ "description").as[String]
+    val hours:String = (task \ "hours").as[String]
 
-    server.database.addTask(Task(title, description))
-    server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
+    val pattern = "([0-9]*)\\.([0-9]*)"
+    if(Pattern.matches(pattern, hours) || hours.forall(_.isDigit)){
+      server.database.addTask(Task(title, description,hours.toDouble))
+      server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
+    }
+
   }
 
 }
@@ -85,5 +95,6 @@ class CompleteTaskListener(server: TodoServer) extends DataListener[String] {
   }
 
 }
+
 
 
