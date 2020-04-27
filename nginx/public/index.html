@@ -13,6 +13,16 @@
 
 <label for="title">Title: </label><input type="text" id="title"/><br/>
 <label for="desc">Description: </label><input type="text" id="desc"/><br/>
+<!-- radio input type documentation: https://www.w3schools.com/html/html_form_input_types.asp -->
+<label>Priority: </label><br/>
+<form>
+    <input type="radio" id="high" name="priority" value="high">
+    <label for="high">High</label>
+    <input type="radio" id="med" name="priority" value="med">
+    <label for="med">Med</label>
+    <input type="radio" id="low" name="priority" value="low">
+    <label for="low">Low</label><br/>
+</form>
 <button onclick="addTask();">Add Task</button>
 <br/><br/>
 
