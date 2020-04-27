@@ -33,7 +33,24 @@ class TodoServer() {
   server.start()
 
   def tasksJSON(): String = {
-    val tasks: List[Task] = database.getTasks
+    var tasks: List[Task] = database.getTasks
+    val comparePriority:(Task, Task) => Boolean = (t1: Task, t2: Task) => { //comparator
+      var result: Boolean = true
+      if (t1.priority == "low" && (t2.priority == "med" || t2.priority == "high")) {
+        result = false
+      }
+      if (t1.priority == "med" && t2.priority == "high") {
+        result = false
+      }
+      if (t1.priority == t2.priority) { //want newer task below old ones if same priority
+        result = false
+      }
+      if (t1.priority == "none" && t2.priority != "none") { //no priority selected is below low priority
+        result = false
+      }
+      result
+    }
+    tasks = tasks.sortWith(comparePriority) //sort high -> med -> low -> none
     val tasksJSON: List[JsValue] = tasks.map((entry: Task) => entry.asJsValue())
     Json.stringify(Json.toJson(tasksJSON))
   }
@@ -69,8 +86,9 @@ class AddTaskListener(server: TodoServer) extends DataListener[String] {
     val task: JsValue = Json.parse(taskJSON)
     val title: String = (task \ "title").as[String]
     val description: String = (task \ "description").as[String]
+    val priority: String = (task \ "priority").as[String] //added priority to task
 
-    server.database.addTask(Task(title, description))
+    server.database.addTask(Task(title, description, priority))
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
   }
 
