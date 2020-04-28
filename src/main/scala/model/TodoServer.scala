@@ -39,13 +39,16 @@ class TodoServer() {
       if(first) {
         usernameToTask+=(data->ListBuffer())
         first = false
+        socket.sendEvent("start_tasks", tasksJSON(data))
       }
       else if(!usernameToTask.keys.toList.contains(data)) {
         usernameToTask += (data -> ListBuffer())
-
+        socket.sendEvent("start_tasks", tasksJSON(data))
       }
-
-      socket.sendEvent("start_tasks", tasksJSON(data))
+      else if(usernameToTask.keys.toList.contains(data)){
+        socket.sendEvent("start_tasks", tasksJSON(data))
+        socket.sendEvent("all_tasks", tasksJSON(data))
+      }
     }
   }
   def tasksJSON(data: String): String = {
