@@ -22,7 +22,7 @@ class TodoServer() {
 
   val config: Configuration = new Configuration {
     setHostname("0.0.0.0")
-    setPort(8086)
+    setPort(8090)
   }
 
   val server: SocketIOServer = new SocketIOServer(config)
@@ -75,19 +75,24 @@ class AddTaskListener(server: TodoServer) extends DataListener[String] {
     val day = now.get(Calendar.DATE)
     val month = now.get(Calendar.MONTH) + 1
     val year = now.get(Calendar.YEAR)
+    if(!deadline(0).isDigit){
+      server.server.getBroadcastOperations.sendEvent("error")
+    }
     if (deadline.slice(6,10).toInt > year){
       server.database.addTask(Task(title, description,deadline))
       server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
     }
-    if (deadline.slice(6,10).toInt == year && deadline.slice(0,2).toInt > month){
+    else if (deadline.slice(6,10).toInt == year && deadline.slice(0,2).toInt > month && deadline.slice(0,2).toInt < 13){
       server.database.addTask(Task(title, description,deadline))
       server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
     }
-    if (deadline.slice(6,10).toInt == year && deadline.slice(0,2).toInt == month && deadline.slice(3,5).toInt >= day){
+    else if (deadline.slice(6,10).toInt == year && deadline.slice(0,2).toInt == month && deadline.slice(3,5).toInt >= day){
       server.database.addTask(Task(title, description,deadline))
       server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
     }
-
+    else{
+      server.server.getBroadcastOperations.sendEvent("error")
+    }
   }
 }
 

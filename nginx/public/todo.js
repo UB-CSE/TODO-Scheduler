@@ -1,7 +1,15 @@
-const socket = io.connect("http://localhost:8086", {transports: ['websocket']});
+const socket = io.connect("http://localhost:8090", {transports: ['websocket']});
 
 socket.on('all_tasks', displayTasks);
 socket.on('message', displayMessage);
+socket.on('error',displayError)
+
+
+function displayError(){
+    alert("The deadline you input is before current time or the format is wrong")
+}
+
+
 
 function displayMessage(newMessage) {
     document.getElementById("message").innerHTML = newMessage;
