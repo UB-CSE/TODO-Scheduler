@@ -4,6 +4,7 @@ import com.corundumstudio.socketio.listener.{ConnectListener, DataListener}
 import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, SocketIOServer}
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
+import java.util.Calendar
 
 
 class TodoServer() {
@@ -21,7 +22,7 @@ class TodoServer() {
 
   val config: Configuration = new Configuration {
     setHostname("0.0.0.0")
-    setPort(8080)
+    setPort(8086)
   }
 
   val server: SocketIOServer = new SocketIOServer(config)
@@ -69,11 +70,25 @@ class AddTaskListener(server: TodoServer) extends DataListener[String] {
     val task: JsValue = Json.parse(taskJSON)
     val title: String = (task \ "title").as[String]
     val description: String = (task \ "description").as[String]
+    val deadline: String = (task \ "deadline").as[String]
+    val now = Calendar.getInstance
+    val day = now.get(Calendar.DATE)
+    val month = now.get(Calendar.MONTH) + 1
+    val year = now.get(Calendar.YEAR)
+    if (deadline.slice(6,10).toInt > year){
+      server.database.addTask(Task(title, description,deadline))
+      server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
+    }
+    if (deadline.slice(6,10).toInt == year && deadline.slice(0,2).toInt > month){
+      server.database.addTask(Task(title, description,deadline))
+      server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
+    }
+    if (deadline.slice(6,10).toInt == year && deadline.slice(0,2).toInt == month && deadline.slice(3,5).toInt >= day){
+      server.database.addTask(Task(title, description,deadline))
+      server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
+    }
 
-    server.database.addTask(Task(title, description))
-    server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
   }
-
 }
 
 

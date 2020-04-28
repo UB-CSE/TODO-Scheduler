@@ -8,4 +8,5 @@ trait DatabaseAPI {
   def completeTask(taskId: String): Unit
   def getTasks: List[Task]
 
+
 }
