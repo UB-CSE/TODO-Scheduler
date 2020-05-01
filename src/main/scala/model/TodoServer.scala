@@ -8,6 +8,7 @@ import play.api.libs.json.{JsValue, Json}
 
 class TodoServer() {
 
+
   val database: DatabaseAPI = if (Configuration.DEV_MODE) {
     new TestingDatabase
   } else {
@@ -48,6 +49,7 @@ class TodoServer() {
 }
 
 object TodoServer {
+
   def main(args: Array[String]): Unit = {
     new TodoServer()
   }
@@ -66,11 +68,13 @@ class ConnectionListener(server: TodoServer) extends ConnectListener {
 class AddTaskListener(server: TodoServer) extends DataListener[String] {
 
   override def onData(socket: SocketIOClient, taskJSON: String, ackRequest: AckRequest): Unit = {
+
     val task: JsValue = Json.parse(taskJSON)
     val title: String = (task \ "title").as[String]
     val description: String = (task \ "description").as[String]
-
-    server.database.addTask(Task(title, description))
+    val due:String  = (task \ "due").as[String]
+    val date:String = (task \ "date").as[String]
+    server.database.addTask(Task(title, description,due,date))//
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
   }
 
@@ -80,10 +84,12 @@ class AddTaskListener(server: TodoServer) extends DataListener[String] {
 class CompleteTaskListener(server: TodoServer) extends DataListener[String] {
 
   override def onData(socket: SocketIOClient, taskId: String, ackRequest: AckRequest): Unit = {
+
     server.database.completeTask(taskId)
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
   }
 
 }
+
 
 
