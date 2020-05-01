@@ -27,6 +27,7 @@ class Database extends DatabaseAPI{
     statement.setString(1, task.title)
     statement.setString(2, task.description)
     statement.setString(3, task.id)
+    statement.setString(4, task.time)
 
     statement.execute()
   }
@@ -51,17 +52,11 @@ class Database extends DatabaseAPI{
       val title = result.getString("title")
       val description = result.getString("description")
       val id = result.getString("id")
-      tasks = new Task(title, description, id) :: tasks
+      val time = result.getString("time")
+      tasks = new Task(title, description, id,time) :: tasks
     }
 
     tasks.reverse
   }
 
 }
-
-
-
-
-
-
-
