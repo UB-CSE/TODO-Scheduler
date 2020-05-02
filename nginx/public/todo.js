@@ -1,4 +1,5 @@
-const socket = io.connect("http://localhost:8080", {transports: ['websocket']});
+//const socket = io.connect("http://localhost:8080", {transports: ['websocket']});
+const socket = io.connect({transports: ['websocket']});
 
 socket.on('all_tasks', displayTasks);
 socket.on('message', displayMessage);
@@ -29,4 +30,24 @@ function addTask() {
 
 function completeTask(taskId) {
     socket.emit("complete_task", taskId);
+}
+
+function dailyChoresFunction() {
+    let choreCheck = document.getElementById("daily_chores");
+    if (choreCheck.checked == true) {
+        socket.emit("add_daily_chores", JSON.stringify({"Opt":"in"}));
+    }
+    else {
+        socket.emit("add_daily_chores", JSON.stringify({"Opt":"out"}));
+    }
+}
+
+function weeklyChoresFunction() {
+    let choreCheck = document.getElementById("weekly_chores");
+    if (choreCheck.checked == true) {
+        socket.emit("add_weekly_chores", JSON.stringify({"Opt":"in"}));
+    }
+    else {
+        socket.emit("add_weekly_chores", JSON.stringify({"Opt":"out"}));
+    }
 }
