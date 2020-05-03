@@ -1,6 +1,6 @@
 package model.database
 
-import java.sql.{Connection, DriverManager, ResultSet}
+import java.sql.{Connection, DriverManager, PreparedStatement, ResultSet}
 
 import model.Task
 
@@ -17,16 +17,17 @@ class Database extends DatabaseAPI{
 
   def setupTable(): Unit = {
     val statement = connection.createStatement()
-    statement.execute("CREATE TABLE IF NOT EXISTS tasks (title TEXT, description TEXT, id TEXT)")
+    statement.execute("CREATE TABLE IF NOT EXISTS tasks (title TEXT, description TEXT, id TEXT, myName TEXT)")
   }
 
 
   override def addTask(task: Task): Unit = {
-    val statement = connection.prepareStatement("INSERT INTO tasks VALUE (?, ?, ?)")
+    val statement = connection.prepareStatement("INSERT INTO tasks VALUE (?, ?, ?, ?)")
 
     statement.setString(1, task.title)
     statement.setString(2, task.description)
     statement.setString(3, task.id)
+    statement.setString(4, task.name)
 
     statement.execute()
   }
@@ -51,9 +52,26 @@ class Database extends DatabaseAPI{
       val title = result.getString("title")
       val description = result.getString("description")
       val id = result.getString("id")
-      tasks = new Task(title, description, id) :: tasks
+      val name = result.getString("myName")
+      tasks = new Task(title, description, id, name) :: tasks
     }
 
+    tasks.reverse
+  }
+
+  override def switchView(s:String): List[Task] = {
+    val statement:PreparedStatement = connection.prepareStatement("SELECT * FROM tasks where myName=?")
+    statement.setString(1, s)
+    val result: ResultSet = statement.executeQuery()
+    var tasks: List[Task] = List()
+
+    while (result.next()) {
+      val title = result.getString("title")
+      val description = result.getString("description")
+      val id = result.getString("id")
+      val name = result.getString("myName")
+      tasks = new Task(title, description, id, name) :: tasks
+    }
     tasks.reverse
   }
 

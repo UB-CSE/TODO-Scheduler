@@ -21,4 +21,8 @@ class TestingDatabase extends DatabaseAPI {
     data.reverse
   }
 
+  override def switchView(s:String): List[Task] = {
+    data.filter(_.name == s).reverse
+  }
+
 }
