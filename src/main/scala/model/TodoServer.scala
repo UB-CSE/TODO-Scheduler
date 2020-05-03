@@ -29,6 +29,7 @@ class TodoServer() {
   server.addConnectListener(new ConnectionListener(this))
   server.addEventListener("add_task", classOf[String], new AddTaskListener(this))
   server.addEventListener("complete_task", classOf[String], new CompleteTaskListener(this))
+  server.addEventListener("add_comment", classOf[String], new AddCommentListener(this))
 
   server.start()
 
@@ -70,7 +71,7 @@ class AddTaskListener(server: TodoServer) extends DataListener[String] {
     val title: String = (task \ "title").as[String]
     val description: String = (task \ "description").as[String]
 
-    server.database.addTask(Task(title, description))
+    server.database.addTask(Task(title, description, ""))
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
   }
 
@@ -81,6 +82,19 @@ class CompleteTaskListener(server: TodoServer) extends DataListener[String] {
 
   override def onData(socket: SocketIOClient, taskId: String, ackRequest: AckRequest): Unit = {
     server.database.completeTask(taskId)
+    server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
+  }
+
+}
+
+class AddCommentListener(server: TodoServer) extends DataListener[String] {
+
+  override def onData(socket: SocketIOClient, commentJSON: String, ackRequest: AckRequest): Unit = {
+    val commentObject: JsValue = Json.parse(commentJSON)
+    val taskId: String = (commentObject \ "taskId").as[String]
+    val comment: String = (commentObject \ "comment").as[String]
+
+    server.database.addComment(taskId, comment)
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
   }
 

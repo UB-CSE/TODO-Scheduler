@@ -12,7 +12,16 @@ function displayTasks(tasksJSON) {
     let formattedTasks = "";
     for (const task of tasks) {
         formattedTasks += "<hr/>";
-        formattedTasks += "<b>" + task['title'] + "</b> - " + task['description'] + "<br/>";
+        formattedTasks += "<b>" + task['title'] + "</b> - " + task['description'] + "<br/><br/>";
+        formattedTasks += "<b>Comments: </b><br/><br/>"
+        let comments = task["comments"].split("_____");
+        for (let comment of comments) {
+            if (comment.length != 0) {
+                formattedTasks += comment + "<br/>";
+            };
+        };
+        formattedTasks += "<label for='comment" + task['id'] + "'>Add Comment: </label><input type='text' id='comment" + task['id'] +"'/><br/>";
+        formattedTasks += "<button onclick='addComment(\"" + task['id'] + "\")'>Add Comment</button>";
         formattedTasks += "<button onclick='completeTask(\"" + task['id'] + "\")'>Task Complete</button>";
     }
     document.getElementById("tasks").innerHTML = formattedTasks;
@@ -29,4 +38,12 @@ function addTask() {
 
 function completeTask(taskId) {
     socket.emit("complete_task", taskId);
+}
+
+function addComment(taskId) {
+    let comment = document.getElementById("comment" + taskId).value;
+    if (comment.length != 0) {
+        socket.emit("add_comment", JSON.stringify({"taskId": taskId, "comment": comment}));
+        document.getElementById("comment" + taskId).value = "";
+    }
 }
