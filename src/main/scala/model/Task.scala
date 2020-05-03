@@ -18,22 +18,23 @@ object Task {
     output
   }
 
-  def apply(title: String, description: String): Task = {
+  def apply(title: String, description: String, due_date: String): Task = {
     val thisId = nextId
     nextId += 1
-    new Task(cleanString(title), cleanString(description, 1000), thisId.toString)
+    new Task(cleanString(title), cleanString(description, 1000), thisId.toString,cleanString(due_date))
   }
 
 
 }
 
-class Task(val title: String, val description: String, val id: String) {
+class Task(val title: String, val description: String, val id: String, val due_date: String) {
 
   def asJsValue(): JsValue ={
     val taskMap: Map[String, JsValue] = Map(
       "title" -> Json.toJson(title),
       "description" -> Json.toJson(description),
-      "id" -> Json.toJson(id)
+      "id" -> Json.toJson(id),
+      "due_date" -> Json.toJson(due_date)
     )
     Json.toJson(taskMap)
   }
