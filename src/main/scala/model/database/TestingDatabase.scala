@@ -21,4 +21,12 @@ class TestingDatabase extends DatabaseAPI {
     data.reverse
   }
 
+  override def claimTasks(taskId: String, username: String): Unit = {
+    for (i <- data) {
+      if (i.id == taskId){
+        i.doer = username
+      }
+    }
+  }
+
 }

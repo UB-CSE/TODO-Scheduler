@@ -27,6 +27,9 @@ class TodoServer() {
   val server: SocketIOServer = new SocketIOServer(config)
 
   server.addConnectListener(new ConnectionListener(this))
+  server.addEventListener("sign_on", classOf[String], new signOnListener(this))
+  server.addEventListener("open_list", classOf[String], new OpenListListener(this))
+  server.addEventListener("claim_task", classOf[String], new ClaimListListener(this))
   server.addEventListener("add_task", classOf[String], new AddTaskListener(this))
   server.addEventListener("complete_task", classOf[String], new CompleteTaskListener(this))
 
@@ -62,6 +65,29 @@ class ConnectionListener(server: TodoServer) extends ConnectListener {
 
 }
 
+class signOnListener(server: TodoServer) extends DataListener[String] {
+  override def onData(socket: SocketIOClient, data: String, ackRequest: AckRequest): Unit = {
+    server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
+  }
+}
+
+class OpenListListener(server: TodoServer) extends DataListener[String] {
+  override def onData(socket: SocketIOClient, data: String, ackRequest: AckRequest): Unit = {
+    server.usernameToSocket += (data -> socket)
+    server.socketToUsername += (socket -> data)
+  }
+}
+
+class ClaimListListener(server: TodoServer) extends DataListener[String] {
+  override def onData(socket: SocketIOClient, taskJSON: String, ackRequest: AckRequest): Unit = {
+    val task: JsValue = Json.parse(taskJSON)
+    val taskID: String = (task \ "taskID").as[String]
+    val username: String = (task \ "userID").as[String]
+
+    server.database.claimTasks(taskID, username)
+    server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
+  }
+}
 
 class AddTaskListener(server: TodoServer) extends DataListener[String] {
 
@@ -69,8 +95,9 @@ class AddTaskListener(server: TodoServer) extends DataListener[String] {
     val task: JsValue = Json.parse(taskJSON)
     val title: String = (task \ "title").as[String]
     val description: String = (task \ "description").as[String]
+    val doer: String = (task \ "doer").as[String]
 
-    server.database.addTask(Task(title, description))
+    server.database.addTask(Task(title, description, doer))
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
   }
 

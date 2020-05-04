@@ -10,13 +10,21 @@
 <br/>
 
 <h3 id="message">Welcome!</h3>
+<div hidden id="userID"> </div>
 
-<label for="title">Title: </label><input type="text" id="title"/><br/>
-<label for="desc">Description: </label><input type="text" id="desc"/><br/>
-<button onclick="addTask();">Add Task</button>
+<div id="list">
+    <br/>
+    <label for="username">Enter your username: </label>
+    <input id="username" type="text">
+    <button onclick="submitUsername();">Submit</button>
+</div>
+
+
 <br/><br/>
 
-<div id="tasks"></div>
+<div id="your tasks"></div>
+<div id="all tasks"></div>
+
 
 <script src="todo.js"></script>
 
