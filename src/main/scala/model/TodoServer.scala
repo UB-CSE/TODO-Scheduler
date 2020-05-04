@@ -5,7 +5,6 @@ import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, S
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
 
-
 class TodoServer() {
 
   val database: DatabaseAPI = if (Configuration.DEV_MODE) {
@@ -70,7 +69,8 @@ class AddTaskListener(server: TodoServer) extends DataListener[String] {
     val title: String = (task \ "title").as[String]
     val description: String = (task \ "description").as[String]
 
-    server.database.addTask(Task(title, description))
+    //TODO - CHANGE USERID
+    server.database.addTask(Task(title, description, 0.toString))
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
   }
 
