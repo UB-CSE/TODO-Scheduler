@@ -2,6 +2,7 @@ const socket = io.connect("http://localhost:8080", {transports: ['websocket']});
 
 socket.on('all_tasks', displayTasks);
 socket.on('message', displayMessage);
+socket.on('stats', displayStats);
 
 function displayMessage(newMessage) {
     document.getElementById("message").innerHTML = newMessage;
@@ -18,6 +19,15 @@ function displayTasks(tasksJSON) {
     document.getElementById("tasks").innerHTML = formattedTasks;
 }
 
+function displayStats(stats_json) {
+    const stats = JSON.parse(stats_json);
+    document.getElementById("visits").innerText = stats['visits'];
+
+    document.getElementById("total_time").innerText = stats['total_time'];
+    document.getElementById("avg_time").innerText = stats['avg_time'];
+
+    console.log(stats);
+}
 
 function addTask() {
     let title = document.getElementById("title").value;
