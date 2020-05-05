@@ -75,7 +75,6 @@ class Database extends DatabaseAPI{
       val userId = result.getString("userId")
       tasks = new Task(title, description, id, userId) :: tasks
     }
-
     tasks.reverse
   }
 

@@ -16,6 +16,7 @@ class TodoServer() {
 
   setNextId()
 
+  var socketsConnected: List[SocketIOClient] = List()
   var usernameToSocket: Map[String, SocketIOClient] = Map()
   var socketToUsername: Map[SocketIOClient, String] = Map()
   var socketToUser: Map[SocketIOClient, User] = Map()
@@ -37,19 +38,22 @@ class TodoServer() {
 
   server.start()
 
-  def tasksJSON(socket: SocketIOClient): String = {
-    val user: User = socketToUser.getOrElse(socket, new User("", "", ""))
-    var tasks: List[Task] = database.getTasks()
+  def tasksJSON(): Unit = {
+    for (socket <- socketsConnected) {
+      var tasks: List[Task] = database.getTasks()
+      val user: User = socketToUser.getOrElse(socket, new User("", "", ""))
 
-    if (user.username != ""){
-      val pList: List[Task] = database.getPersonalTasks(user)
-      for (ptask <- pList) {
-        tasks ::= ptask
+      if (user.username != "") {
+        val pList: List[Task] = database.getPersonalTasks(user)
+
+        for (ptask <- pList) {
+          tasks ::= ptask
+        }
       }
-    }
 
-    val tasksJSON: List[JsValue] = tasks.map((entry: Task) => entry.asJsValue())
-    Json.stringify(Json.toJson(tasksJSON))
+      val tasksJSON: List[JsValue] = tasks.map((entry: Task) => entry.asJsValue())
+      socket.sendEvent("all_tasks", Json.stringify(Json.toJson(tasksJSON)))
+    }
   }
 
   def setNextId(): Unit = {
@@ -71,7 +75,9 @@ object TodoServer {
 class ConnectionListener(server: TodoServer) extends ConnectListener {
 
   override def onConnect(socket: SocketIOClient): Unit = {
-    socket.sendEvent("all_tasks", server.tasksJSON(socket))
+    println("Connected: " + socket)
+    server.socketsConnected ::= socket
+    server.tasksJSON()
   }
 
 }
@@ -86,6 +92,8 @@ class DisconnectionListener(server: TodoServer) extends DisconnectListener {
       server.socketToUsername -= socket
       server.usernameToSocket -= username
     }
+
+    server.socketsConnected = server.socketsConnected.filterNot(_ == socket)
   }
 
 }
@@ -99,7 +107,7 @@ class AddTaskListener(server: TodoServer) extends DataListener[String] {
     val description: String = (task \ "description").as[String]
 
     server.database.addTask(Task(title, description, 0.toString))
-    server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON(socket))
+    server.tasksJSON()
   }
 
 }
@@ -115,7 +123,7 @@ class AddPTaskListener(server: TodoServer) extends DataListener[String] {
 
     if (username != "") {
       server.database.addTask(Task(title, description, user.id))
-      socket.sendEvent("all_tasks", server.tasksJSON(socket))
+      server.tasksJSON()
     }
   }
 
@@ -126,7 +134,7 @@ class CompleteTaskListener(server: TodoServer) extends DataListener[String] {
 
   override def onData(socket: SocketIOClient, taskId: String, ackRequest: AckRequest): Unit = {
     server.database.completeTask(taskId)
-    server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON(socket))
+    server.tasksJSON()
   }
 
 }
@@ -150,7 +158,7 @@ class RegisterListener(server: TodoServer) extends DataListener[String] {
 
       socket.sendEvent("register_user", Json.stringify(Json.toJson(userMap)))
 
-      socket.sendEvent("all_tasks", server.tasksJSON(socket))
+      server.tasksJSON()
     }
   }
 }
@@ -169,12 +177,12 @@ class LoginListener(server: TodoServer) extends DataListener[String] {
       val userMap: Map[String, String] = Map("username" -> username)
 
       socket.sendEvent("login_user", Json.stringify(Json.toJson(userMap)))
-      socket.sendEvent("all_tasks", server.tasksJSON(socket))
+      server.tasksJSON()
     } else {
       val userMap: Map[String, String] = Map("username" -> "")
 
       socket.sendEvent("login_user", Json.stringify(Json.toJson(userMap)))
-
+      server.tasksJSON()
     }
   }
 }
