@@ -21,4 +21,7 @@ class TestingDatabase extends DatabaseAPI {
     data.reverse
   }
 
+  override def filterByLabel(label: String): List[Task] = {
+    data.filter( _.label == label)
+  }
 }
