@@ -17,17 +17,17 @@ class Database extends DatabaseAPI{
 
   def setupTable(): Unit = {
     val statement = connection.createStatement()
-    statement.execute("CREATE TABLE IF NOT EXISTS tasks (title TEXT, description TEXT, id TEXT)")
+    statement.execute("CREATE TABLE IF NOT EXISTS tasks (title TEXT, description TEXT, label TEXT, id TEXT,)")
   }
 
 
   override def addTask(task: Task): Unit = {
-    val statement = connection.prepareStatement("INSERT INTO tasks VALUE (?, ?, ?)")
+    val statement = connection.prepareStatement("INSERT INTO tasks VALUE (?, ?, ?, ?)")
 
     statement.setString(1, task.title)
     statement.setString(2, task.description)
-    statement.setString(3, task.id)
-
+    statement.setString(3, task.label)
+    statement.setString(4, task.id)
     statement.execute()
   }
 
@@ -50,13 +50,34 @@ class Database extends DatabaseAPI{
     while (result.next()) {
       val title = result.getString("title")
       val description = result.getString("description")
+      val label = result.getString("label")
       val id = result.getString("id")
-      tasks = new Task(title, description, id) :: tasks
+
+      tasks = new Task(title, description, label, id) :: tasks
     }
 
     tasks.reverse
   }
 
+  override def filterByLabel(label: String): List[Task] = {
+    val statement = connection.prepareStatement("SELECT * FROM tasks WHERE label= ?")
+    statement.setString(1, label)
+
+    val resultSet: ResultSet = statement.executeQuery()
+
+    var tasks: List[Task] = List()
+
+    while (resultSet.next()) {
+      val title = resultSet.getString("title")
+      val description = resultSet.getString("description")
+      val label = resultSet.getString("label")
+      val id = resultSet.getString("id")
+
+      tasks = new Task(title, description, label , id) :: tasks
+    }
+
+    tasks.reverse
+  }
 }
 
 
