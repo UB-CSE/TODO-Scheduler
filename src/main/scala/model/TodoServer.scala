@@ -68,9 +68,11 @@ class AddTaskListener(server: TodoServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, taskJSON: String, ackRequest: AckRequest): Unit = {
     val task: JsValue = Json.parse(taskJSON)
     val title: String = (task \ "title").as[String]
+    val date: String = (task \ "date").as[String]
+    val created: String = (task \ "created").as[String]
     val description: String = (task \ "description").as[String]
 
-    server.database.addTask(Task(title, description))
+    server.database.addTask(Task(title, description, date, created))
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
   }
 
