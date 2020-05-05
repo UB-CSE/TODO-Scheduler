@@ -1,6 +1,6 @@
 package model.database
 
-import model.Task
+import model.{Task, User}
 
 class TestingDatabase extends DatabaseAPI {
 
@@ -20,5 +20,10 @@ class TestingDatabase extends DatabaseAPI {
   override def getTasks: List[Task] = {
     data.reverse
   }
+
+  override def registerUser(username: String, password: String): Boolean = { true }
+  override def loginUser(username: String, password: String): Boolean = { true }
+  def getUser(username: String): User = { new User("", "", "")}
+  override def getPersonalTasks(user: User): List[Task] = { data.reverse }
 
 }
