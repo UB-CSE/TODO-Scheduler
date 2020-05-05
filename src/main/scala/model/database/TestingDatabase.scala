@@ -21,4 +21,7 @@ class TestingDatabase extends DatabaseAPI {
     data.reverse
   }
 
+  override def sortTasks():Unit={
+    data = data.sortWith(_.priority<_.priority) //Sort the data with priority
+  }
 }

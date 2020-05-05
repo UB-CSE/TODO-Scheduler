@@ -13,7 +13,18 @@
 
 <label for="title">Title: </label><input type="text" id="title"/><br/>
 <label for="desc">Description: </label><input type="text" id="desc"/><br/>
+<label for="priority">Priority: </label>
+<select id="priority">
+<!--    Add priority options for users to choose from.-->
+    <option value="1">1(lowest)</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5(highest)</option>
+</select><br/><br/>
 <button onclick="addTask();">Add Task</button>
+<!--Add 'Sort Task' button for user to sort the tasks.-->
+<button onclick="sortTask();">Sort Task</button>
 <br/><br/>
 
 <div id="tasks"></div>

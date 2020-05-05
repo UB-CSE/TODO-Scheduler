@@ -29,6 +29,7 @@ class TodoServer() {
   server.addConnectListener(new ConnectionListener(this))
   server.addEventListener("add_task", classOf[String], new AddTaskListener(this))
   server.addEventListener("complete_task", classOf[String], new CompleteTaskListener(this))
+  server.addEventListener("sort_task", classOf[Nothing], new SortTaskListener(this))  //Listen for "sort_task" type message to sort the tasks
 
   server.start()
 
@@ -69,8 +70,8 @@ class AddTaskListener(server: TodoServer) extends DataListener[String] {
     val task: JsValue = Json.parse(taskJSON)
     val title: String = (task \ "title").as[String]
     val description: String = (task \ "description").as[String]
-
-    server.database.addTask(Task(title, description))
+    val priority: String=(task \ "priority").as[String]
+    server.database.addTask(Task(title, description, priority))
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
   }
 
@@ -86,4 +87,12 @@ class CompleteTaskListener(server: TodoServer) extends DataListener[String] {
 
 }
 
+class SortTaskListener(server: TodoServer) extends DataListener[Nothing] {
 
+  override def onData(socket: SocketIOClient, taskId: Nothing, ackRequest: AckRequest): Unit = {
+    server.database.sortTasks()
+    server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
+
+  }
+
+}
