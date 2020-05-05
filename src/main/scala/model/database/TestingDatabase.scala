@@ -21,4 +21,12 @@ class TestingDatabase extends DatabaseAPI {
     data.reverse
   }
 
+  override def addComment(taskId: String, commentToAdd: String): Unit = {
+    for (task <- data) {
+      if (task.id == taskId) {
+        task.comments += "_____" + commentToAdd
+      }
+    }
+  }
+
 }
