@@ -1,7 +1,7 @@
 package model
 
 object Configuration {
-println("mhm")
+println("ye")
   val DEV_MODE = true
 
 }
