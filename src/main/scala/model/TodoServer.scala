@@ -92,7 +92,7 @@ class AddCommentListener(server: TodoServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, commentJSON: String, ackRequest: AckRequest): Unit = {
     val commentObject: JsValue = Json.parse(commentJSON)
     val taskId: String = (commentObject \ "taskId").as[String]
-    val comment: String = (commentObject \ "comment").as[String]
+    val comment: String = Task.cleanString((commentObject \ "comment").as[String])
 
     server.database.addComment(taskId, comment)
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
