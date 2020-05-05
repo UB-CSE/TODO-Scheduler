@@ -11,15 +11,24 @@
 
 <h3 id="message">Welcome!</h3>
 
+<div id="login">
+    <p>Username: <input id="usernameInput" type="text"></p>
+    <p>Password: <input id="passwordInput" type="password"></p>
+    <p><input id="registerSubmit" type="button" onclick="register()" value="Register">
+    <input id="loginSubmit" type="button" onclick="login()" value="Login"></p>
+    <div id="errorMsg" style="color:red"></div>
+    <br/>
+</div>
+
 <label for="title">Title: </label><input type="text" id="title"/><br/>
 <label for="desc">Description: </label><input type="text" id="desc"/><br/>
-<button onclick="addTask();">Add Task</button>
+<button id="addTaskAll" onclick="addTask(this.id);">Add Task</button>
+<button id="addTaskPersonal" style="display:none;" onclick="addTask(this.id);">Add Personal Task</button>
 <br/><br/>
 
 <div id="tasks"></div>
 
 <script src="todo.js"></script>
-<script src="login.js"></script>
 
 </body>
 </html>
