@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0">
-    <groupId>edu.buffalo.cse</groupId>
+    <groupId>asdf</groupId>
     <artifactId>todo-scheduler</artifactId>
     <modelVersion>4.0.0</modelVersion>
     <url>http://maven.apache.org</url>

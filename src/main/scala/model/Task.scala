@@ -1,5 +1,8 @@
 package model
 
+import java.text.SimpleDateFormat
+import java.util.Date
+
 import play.api.libs.json.{JsValue, Json}
 
 
@@ -18,21 +21,27 @@ object Task {
     output
   }
 
-  def apply(title: String, description: String): Task = {
+  def apply(title: String, description: String, deadline: String, taskAdded: Date, priority: Int, estimated: String): Task = {
     val thisId = nextId
     nextId += 1
-    new Task(cleanString(title), cleanString(description, 1000), thisId.toString)
+    new Task(cleanString(title), cleanString(description, 1000), deadline, taskAdded, estimated, priority, thisId.toString)
   }
 
 
 }
 
-class Task(val title: String, val description: String, val id: String) {
+class Task(val title: String, val description: String, val deadline: String, val taskAdded: Date, val estimated: String, val priority: Int, val id: String) {
 
+  val formatted = new SimpleDateFormat("dd / MM / yy")
+  val formattedDate = formatted.format(taskAdded)
   def asJsValue(): JsValue ={
     val taskMap: Map[String, JsValue] = Map(
       "title" -> Json.toJson(title),
       "description" -> Json.toJson(description),
+      "deadline" -> Json.toJson(deadline),
+      "taskAdded" -> Json.toJson(formattedDate),
+      "priority" -> Json.toJson(priority.toString()),
+      "estimated" -> Json.toJson(estimated),
       "id" -> Json.toJson(id)
     )
     Json.toJson(taskMap)
