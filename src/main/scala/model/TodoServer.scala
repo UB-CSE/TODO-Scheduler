@@ -4,6 +4,8 @@ import com.corundumstudio.socketio.listener.{ConnectListener, DataListener}
 import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, SocketIOServer}
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
+import java.util.Calendar
+import java.text.SimpleDateFormat
 
 
 class TodoServer() {
@@ -34,6 +36,7 @@ class TodoServer() {
 
   def tasksJSON(): String = {
     val tasks: List[Task] = database.getTasks
+
     val tasksJSON: List[JsValue] = tasks.map((entry: Task) => entry.asJsValue())
     Json.stringify(Json.toJson(tasksJSON))
   }
@@ -69,8 +72,12 @@ class AddTaskListener(server: TodoServer) extends DataListener[String] {
     val task: JsValue = Json.parse(taskJSON)
     val title: String = (task \ "title").as[String]
     val description: String = (task \ "description").as[String]
+    val deadline: String = (task \ "deadline").as[String]
+    val priority: String = (task \ "priority").as[String]
+    val estimated: String = (task \ "estimated").as[String]
+    val taskAdded = Calendar.getInstance().getTime
 
-    server.database.addTask(Task(title, description))
+    server.database.addTask(Task(title, description, deadline, taskAdded, priority.toInt, estimated))
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
   }
 
@@ -87,3 +94,24 @@ class CompleteTaskListener(server: TodoServer) extends DataListener[String] {
 }
 
 
+
+/*
+
+This system tracks tasks that need to be completed.
+
+The initial state of the project is a very minimal web app. Users can add tasks to be completed and mark them as completed. All users are treated the same.
+
+Suggestions
+Here are a few suggested features that could be added to the system. Use the discussion link above to discuss other features.
+
+Support multiple users
+Add authentication
+Each user can have a private TODO list
+Public tasks can be assigned to specific users
+Users can create teams with tasks only viewable by members of the team
+Sort tasks based on their deadlines/priority levels
+Add labels to tasks with an option to filter by label
+Add comments to tasks
+
+
+ */
