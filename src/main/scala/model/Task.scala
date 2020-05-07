@@ -1,5 +1,8 @@
 package model
 
+import java.text.SimpleDateFormat
+import java.util.Calendar
+
 import play.api.libs.json.{JsValue, Json}
 
 
@@ -28,12 +31,19 @@ object Task {
 }
 
 class Task(val title: String, val description: String, val id: String) {
+  def current(): String = {
+    val Date: String = "yyyy-MM-dd HH:mm:ss"
+    val calendar: Calendar = Calendar.getInstance
+    val sdf: SimpleDateFormat = new SimpleDateFormat(Date)
+    sdf.format(calendar.getTime)
+  }
 
   def asJsValue(): JsValue ={
     val taskMap: Map[String, JsValue] = Map(
       "title" -> Json.toJson(title),
       "description" -> Json.toJson(description),
-      "id" -> Json.toJson(id)
+      "id" -> Json.toJson(id),
+      "date" -> Json.toJson(current())
     )
     Json.toJson(taskMap)
   }
