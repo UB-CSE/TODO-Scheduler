@@ -29,6 +29,7 @@ class TodoServer() {
   server.addConnectListener(new ConnectionListener(this))
   server.addEventListener("add_task", classOf[String], new AddTaskListener(this))
   server.addEventListener("complete_task", classOf[String], new CompleteTaskListener(this))
+  server.addEventListener("reorder", classOf[Array[String]], new ReorderListener(this))
 
   server.start()
 
@@ -86,4 +87,50 @@ class CompleteTaskListener(server: TodoServer) extends DataListener[String] {
 
 }
 
+class ReorderListener(server: TodoServer) extends DataListener[Array[String]] {
+
+  //data(0) is the initial position
+  //data(1) is the new position
+
+  override def onData(client: SocketIOClient, data: Array[String], ackSender: AckRequest): Unit = {
+    val aData: Array[String] = data(0).split(",")
+    val origTasks: List[Task] = server.database.getTasks
+    var newTasks: List[Task] = List()
+    Task.nextId = 0
+
+    //Checks if target position is higher(false) or lower(true)
+    var isHigherPriority = false
+    if(aData(0) >= aData(1)) {
+      isHigherPriority = true
+    }
+
+    for(task <- origTasks) {
+      if(task.id == aData(0)) {
+        newTasks ::= new Task(task.title, task.description, aData(1))
+      }
+      else if(isHigherPriority) {
+        if(aData(1) <= task.id && task.id < aData(0)) {
+          newTasks ::= new Task(task.title, task.description, (task.id.toInt + 1).toString)
+        }
+        else {
+          newTasks ::= task
+        }
+      }
+      else {
+        if(aData(1) >= task.id && task.id > aData(0)) {
+          newTasks ::= new Task(task.title, task.description, (task.id.toInt - 1).toString)
+        }
+        else {
+          newTasks ::= task
+        }
+      }
+      server.server.getBroadcastOperations.sendEvent("clear", task.id)
+    }
+    newTasks = newTasks.sortBy(_.id.toInt)
+
+    for(task <- newTasks) {
+      server.server.getBroadcastOperations.sendEvent("add", task.title + "`" + task.description)
+    }
+  }
+}
 
