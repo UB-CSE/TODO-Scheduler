@@ -29,6 +29,8 @@ class TodoServer() {
   server.addConnectListener(new ConnectionListener(this))
   server.addEventListener("add_task", classOf[String], new AddTaskListener(this))
   server.addEventListener("complete_task", classOf[String], new CompleteTaskListener(this))
+  server.addEventListener("delete_task", classOf[String], new DeleteTaskListener(this))
+  server.addEventListener("undo_task", classOf[String], new UndoTaskListener(this))
 
   server.start()
 
@@ -55,35 +57,42 @@ object TodoServer {
 
 
 class ConnectionListener(server: TodoServer) extends ConnectListener {
-
   override def onConnect(socket: SocketIOClient): Unit = {
     socket.sendEvent("all_tasks", server.tasksJSON())
   }
-
 }
 
 
 class AddTaskListener(server: TodoServer) extends DataListener[String] {
-
   override def onData(socket: SocketIOClient, taskJSON: String, ackRequest: AckRequest): Unit = {
     val task: JsValue = Json.parse(taskJSON)
     val title: String = (task \ "title").as[String]
     val description: String = (task \ "description").as[String]
+    val today: String = (task \ "today").as[String]
 
-    server.database.addTask(Task(title, description))
+    server.database.addTask(Task(title, description, today))
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
   }
-
 }
 
 
 class CompleteTaskListener(server: TodoServer) extends DataListener[String] {
-
   override def onData(socket: SocketIOClient, taskId: String, ackRequest: AckRequest): Unit = {
     server.database.completeTask(taskId)
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
   }
-
 }
 
+class DeleteTaskListener(server: TodoServer) extends DataListener[String] {
+  override def onData(socket: SocketIOClient, taskId: String, ackRequest: AckRequest): Unit = {
+    server.database.deleteTask(taskId)
+    server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
+  }
+}
 
+class UndoTaskListener(server: TodoServer) extends DataListener[String] {
+  override def onData(socket: SocketIOClient, taskId: String, ackRequest: AckRequest): Unit = {
+    server.database.undoTask(taskId)
+    server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
+  }
+}
