@@ -69,8 +69,16 @@ class AddTaskListener(server: TodoServer) extends DataListener[String] {
     val task: JsValue = Json.parse(taskJSON)
     val title: String = (task \ "title").as[String]
     val description: String = (task \ "description").as[String]
+    val priority: String = (task \ "priorities").as[String]
 
-    server.database.addTask(Task(title, description))
+    val priorityToNumber: Map[String, Int] = Map(
+      "Extreme" -> 4,
+      "High"-> 3,
+      "Medium" -> 2,
+      "Low" -> 1
+    )
+
+    server.database.addTask(Task(title, description, priorityToNumber(priority).toString))
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
   }
 
