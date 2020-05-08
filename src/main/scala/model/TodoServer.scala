@@ -29,6 +29,7 @@ class TodoServer() {
   server.addConnectListener(new ConnectionListener(this))
   server.addEventListener("add_task", classOf[String], new AddTaskListener(this))
   server.addEventListener("complete_task", classOf[String], new CompleteTaskListener(this))
+  server.addEventListener("clear_tasks", classOf[Nothing], new clearTasks(this)) //listens for clear
 
   server.start()
 
@@ -69,8 +70,10 @@ class AddTaskListener(server: TodoServer) extends DataListener[String] {
     val task: JsValue = Json.parse(taskJSON)
     val title: String = (task \ "title").as[String]
     val description: String = (task \ "description").as[String]
+    val priority: String = (task \ "priority").as[String]    //parses priority
 
-    server.database.addTask(Task(title, description))
+
+    server.database.addTask(Task(title, description, priority))   //adds priority
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
   }
 
@@ -84,6 +87,13 @@ class CompleteTaskListener(server: TodoServer) extends DataListener[String] {
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
   }
 
+}
+
+class clearTasks(server: TodoServer) extends DataListener[Nothing] {    //created to listen for clear tasks message
+  override def onData(socketIOClient: SocketIOClient, t: Nothing, ackRequest: AckRequest): Unit = {
+      server.database.clearTasks
+      server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
+  }
 }
 
 

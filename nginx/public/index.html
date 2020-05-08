@@ -10,10 +10,13 @@
 <br/>
 
 <h3 id="message">Welcome!</h3>
+<h4>Priority should be 1-4, 4 being the highest, 1 the lowest.  From highest to lowest: Red, Orange, Purple, Blue</h4>
 
 <label for="title">Title: </label><input type="text" id="title"/><br/>
 <label for="desc">Description: </label><input type="text" id="desc"/><br/>
+<label for="prior">Priority: </label><input type ="text" id = "prior"/><br/>
 <button onclick="addTask();">Add Task</button>
+<button onclick="clearTasks();">Clear Tasks</button>
 <br/><br/>
 
 <div id="tasks"></div>
