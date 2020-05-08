@@ -63,15 +63,22 @@ class ConnectionListener(server: TodoServer) extends ConnectListener {
 }
 
 
+// add functionality to the AddTaskListener //
+// when the listener receives  a message:
+// If the title is blank then the server will send an error message to the socket user
+
 class AddTaskListener(server: TodoServer) extends DataListener[String] {
 
   override def onData(socket: SocketIOClient, taskJSON: String, ackRequest: AckRequest): Unit = {
     val task: JsValue = Json.parse(taskJSON)
     val title: String = (task \ "title").as[String]
     val description: String = (task \ "description").as[String]
-
-    server.database.addTask(Task(title, description))
-    server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
+    if (title.isEmpty || title.isBlank) {
+      socket.sendEvent("noTitleEntered", Json.stringify(Json.toJson(description)))
+    } else {
+      server.database.addTask(Task(title, description))
+      server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
+    }
   }
 
 }
