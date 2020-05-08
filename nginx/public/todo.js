@@ -3,6 +3,15 @@ const socket = io.connect("http://localhost:8080", {transports: ['websocket']});
 socket.on('all_tasks', displayTasks);
 socket.on('message', displayMessage);
 
+socket.on('noTitleEntered', displayError);
+
+function displayError(currentDesc) {
+    let tenure = prompt("Please enter a title", "type here");
+    if (tenure != null) {
+        socket.emit("add_task", JSON.stringify({"title": tenure, "description": JSON.parse(currentDesc)}));
+    }
+}
+
 function displayMessage(newMessage) {
     document.getElementById("message").innerHTML = newMessage;
 }
