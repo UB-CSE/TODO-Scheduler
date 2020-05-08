@@ -4,10 +4,13 @@ import com.corundumstudio.socketio.listener.{ConnectListener, DataListener}
 import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, SocketIOServer}
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
+import akka.actor.{Actor, ActorSystem, Props}
 
+case object Update
 
-class TodoServer() {
+class TodoServer() extends Actor {
 
+  var Timer: Long = 0
   val database: DatabaseAPI = if (Configuration.DEV_MODE) {
     new TestingDatabase
   } else {
@@ -25,7 +28,6 @@ class TodoServer() {
   }
 
   val server: SocketIOServer = new SocketIOServer(config)
-
   server.addConnectListener(new ConnectionListener(this))
   server.addEventListener("add_task", classOf[String], new AddTaskListener(this))
   server.addEventListener("complete_task", classOf[String], new CompleteTaskListener(this))
@@ -45,19 +47,34 @@ class TodoServer() {
     }
   }
 
-}
+  override def receive: Receive = {
+    case Update =>
+      val time: Double = (System.nanoTime() - Timer) / 1000000000
+      for (user <- usernameToSocket) {
+        user._2.sendEvent("time", Json.stringify(Json.toJson(time)))
+      }
+  }
+ }
 
 object TodoServer {
   def main(args: Array[String]): Unit = {
-    new TodoServer()
+    val actorSystem = ActorSystem()
+    import actorSystem.dispatcher
+
+    import scala.concurrent.duration._
+
+    val server = actorSystem.actorOf(Props(classOf[TodoServer]))
+
+    actorSystem.scheduler.schedule(0.milliseconds, 100.milliseconds, server, Update)
   }
 }
-
 
 class ConnectionListener(server: TodoServer) extends ConnectListener {
 
   override def onConnect(socket: SocketIOClient): Unit = {
     socket.sendEvent("all_tasks", server.tasksJSON())
+    server.usernameToSocket += "user" -> socket
+    server.Timer = System.nanoTime()
   }
 
 }
@@ -82,6 +99,7 @@ class CompleteTaskListener(server: TodoServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, taskId: String, ackRequest: AckRequest): Unit = {
     server.database.completeTask(taskId)
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
+    server.Timer = System.nanoTime()
   }
 
 }

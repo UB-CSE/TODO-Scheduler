@@ -2,6 +2,11 @@ const socket = io.connect("http://localhost:8080", {transports: ['websocket']});
 
 socket.on('all_tasks', displayTasks);
 socket.on('message', displayMessage);
+socket.on('time', displayTime);
+
+function displayTime(time){
+    document.getElementById("time").innerHTML = time
+}
 
 function displayMessage(newMessage) {
     document.getElementById("message").innerHTML = newMessage;
