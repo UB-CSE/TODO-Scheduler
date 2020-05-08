@@ -26,7 +26,7 @@ class Database extends DatabaseAPI{
 
     statement.setString(1, task.title)
     statement.setString(2, task.description)
-    statement.setString(2, task.today)
+    statement.setString(3, task.today)
     statement.setString(4, task.id)
 
     statement.execute()
