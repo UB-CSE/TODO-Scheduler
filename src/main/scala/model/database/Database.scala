@@ -58,9 +58,7 @@ class Database extends DatabaseAPI{
     tasks.reverse
   }
 
-  override def sortTasks(): Unit = {
-
-  }
+  override def sortTasks(): Unit = {}
 
 }
 

@@ -40,3 +40,9 @@ function sortTask() {
     socket.emit("sort_task");
     //Send "sort_task" type message to the server.
 }
+
+function dark_mode(){
+    const element = document.body;
+    element.classList.toggle("dark_mode");
+    // toggle Dark Mode on the body of website
+}

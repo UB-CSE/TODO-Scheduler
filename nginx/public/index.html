@@ -4,7 +4,21 @@
     <meta charset="UTF-8">
     <title>Office Hours</title>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <style>
+        body {
+            padding: 25px;
+            background-color: white;
+            color: black;
+            font-size: 25px;
+        }
+
+        .dark_mode {
+            background-color: #202124;
+            color: #e2e2e2;
+        }
+    </style>
 </head>
+
 <body>
 
 <br/>
@@ -25,6 +39,8 @@
 <button onclick="addTask();">Add Task</button>
 <!--Add 'Sort Task' button for user to sort the tasks.-->
 <button onclick="sortTask();">Sort Task</button>
+<button onclick="dark_mode();">Switch Dark Mode</button>
+
 <br/><br/>
 
 <div id="tasks"></div>
