@@ -5,7 +5,7 @@ import java.sql.{Connection, DriverManager, ResultSet}
 import model.Task
 
 
-class Database extends DatabaseAPI{
+class Database extends DatabaseAPI {
 
   val url = "jdbc:mysql://mysql/todo?autoReconnect=true"
   val username: String = sys.env("DB_USERNAME")
@@ -23,10 +23,11 @@ class Database extends DatabaseAPI{
 
   override def addTask(task: Task): Unit = {
     val statement = connection.prepareStatement("INSERT INTO tasks VALUE (?, ?, ?)")
-
+    // test 3
     statement.setString(1, task.title)
     statement.setString(2, task.description)
     statement.setString(3, task.id)
+    statement.setString(4, task.priority)
 
     statement.execute()
   }
@@ -51,7 +52,8 @@ class Database extends DatabaseAPI{
       val title = result.getString("title")
       val description = result.getString("description")
       val id = result.getString("id")
-      tasks = new Task(title, description, id) :: tasks
+      val priority = result.getString("priority")
+      tasks = new Task(title, description, id, priority) :: tasks
     }
 
     tasks.reverse
