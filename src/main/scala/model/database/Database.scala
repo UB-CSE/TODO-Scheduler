@@ -23,7 +23,7 @@ class Database extends DatabaseAPI {
 
   override def addTask(task: Task): Unit = {
     val statement = connection.prepareStatement("INSERT INTO tasks VALUE (?, ?, ?)")
-    // test 2
+    // test 3
     statement.setString(1, task.title)
     statement.setString(2, task.description)
     statement.setString(3, task.id)
