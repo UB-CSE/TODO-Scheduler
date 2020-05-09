@@ -19,6 +19,9 @@ class TodoServer() {
   var usernameToSocket: Map[String, SocketIOClient] = Map()
   var socketToUsername: Map[SocketIOClient, String] = Map()
 
+  var taskDescription: Map[String, String] = Map()
+  var taskTitles: List[String] = List()
+
   val config: Configuration = new Configuration {
     setHostname("0.0.0.0")
     setPort(8080)
@@ -29,6 +32,9 @@ class TodoServer() {
   server.addConnectListener(new ConnectionListener(this))
   server.addEventListener("add_task", classOf[String], new AddTaskListener(this))
   server.addEventListener("complete_task", classOf[String], new CompleteTaskListener(this))
+  server.addEventListener("save_task", classOf[String], new SaveTaskListener(this))
+  server.addEventListener("add_from_saved_tasks", classOf[String], new AddFromSavesTasksListener(this))
+
 
   server.start()
 
@@ -84,6 +90,33 @@ class CompleteTaskListener(server: TodoServer) extends DataListener[String] {
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
   }
 
+}
+
+class SaveTaskListener(server: TodoServer) extends DataListener[String] {
+  override def onData(client: SocketIOClient, taskJSON: String, ackSender: AckRequest): Unit = {
+    val task: JsValue = Json.parse(taskJSON)
+    val title: String = (task \ "title").as[String]
+    val description: String = (task \ "description").as[String]
+
+    server.database.saveTask(Task(title, description))
+    server.taskDescription += title -> description
+    server.taskTitles = server.taskTitles :+ title
+  }
+}
+
+class AddFromSavesTasksListener(server: TodoServer) extends DataListener[String] {
+  override def onData(socket: SocketIOClient, taskJSON: String, ackRequest: AckRequest): Unit = {
+    val task: JsValue = Json.parse(taskJSON)
+    val title: String = (task \ "title").as[String]
+
+    if(server.taskTitles.contains(title)) {
+      server.database.addFromSavedTasks(Task(title, server.taskDescription(title)))
+      server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
+    }
+    else{
+      socket.sendEvent("task_does_not_exist", title)
+    }
+  }
 }
 
 
