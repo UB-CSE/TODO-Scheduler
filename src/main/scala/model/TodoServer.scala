@@ -18,6 +18,7 @@ class TodoServer() {
 
   var usernameToSocket: Map[String, SocketIOClient] = Map()
   var socketToUsername: Map[SocketIOClient, String] = Map()
+  var privateList: List[SocketIOClient] = List()
 
   val config: Configuration = new Configuration {
     setHostname("0.0.0.0")
@@ -69,8 +70,9 @@ class AddTaskListener(server: TodoServer) extends DataListener[String] {
     val task: JsValue = Json.parse(taskJSON)
     val title: String = (task \ "title").as[String]
     val description: String = (task \ "description").as[String]
+    val deadline: String = (task \ "deadline").as[String]
 
-    server.database.addTask(Task(title, description))
+    server.database.addTask(Task(title, description, deadline))
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
   }
 
