@@ -1,5 +1,8 @@
 package model
 
+import java.text.SimpleDateFormat
+import java.util.Calendar
+
 import com.corundumstudio.socketio.listener.{ConnectListener, DataListener}
 import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, SocketIOServer}
 import model.database.{Database, DatabaseAPI, TestingDatabase}
@@ -69,8 +72,11 @@ class AddTaskListener(server: TodoServer) extends DataListener[String] {
     val task: JsValue = Json.parse(taskJSON)
     val title: String = (task \ "title").as[String]
     val description: String = (task \ "description").as[String]
-
-    server.database.addTask(Task(title, description))
+    // used to fine syntax for accessing current time -> https://alvinalexander.com/scala/scala-get-current-date-time-hour-calendar-example/
+    val date = new SimpleDateFormat("M-d-y")
+    val formatted : String = date.format(Calendar.getInstance().getTime)
+    val due : String = (task \ "due").as[String]
+    server.database.addTask(Task(title, description, formatted, due))
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
   }
 
