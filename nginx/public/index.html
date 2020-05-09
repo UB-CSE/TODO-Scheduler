@@ -6,15 +6,19 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
     <style>
         body {
-            padding: 25px;
-            background-color: white;
-            color: black;
-            font-size: 25px;
+            background-color: #e2e2e2;
+            color: #202124;
         }
 
         .dark_mode {
             background-color: #202124;
             color: #e2e2e2;
+        }
+        .dueDateFuture{
+            color:#FF0000;
+        }
+        .dueDatePast{
+            color:#4285f4;
         }
     </style>
 </head>
@@ -27,9 +31,10 @@
 
 <label for="title">Title: </label><input type="text" id="title"/><br/>
 <label for="desc">Description: </label><input type="text" id="desc"/><br/>
+<label for="dueDate">Due Date: </label><input type="date" id="dueDate"/><br/>
 <label for="priority">Priority: </label>
 <select id="priority">
-<!--    Add priority options for users to choose from.-->
+    <!--    Add priority options for users to choose from.-->
     <option value="1">1(lowest)</option>
     <option value="2">2</option>
     <option value="3">3</option>
@@ -38,8 +43,11 @@
 </select><br/><br/>
 <button onclick="addTask();">Add Task</button>
 <!--Add 'Sort Task' button for user to sort the tasks.-->
-<button onclick="sortTask();">Sort Task</button>
+<button onclick="sortTask('Date');">Sort Task by Date</button>
+<button onclick="sortTask('Priority');">Sort Task by Priority</button>
+<!--Add 'Switch Dark Mode' button for user to toggle the dark mode.-->
 <button onclick="dark_mode();">Switch Dark Mode</button>
+
 
 <br/><br/>
 
