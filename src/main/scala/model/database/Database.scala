@@ -57,6 +57,19 @@ class Database extends DatabaseAPI{
     tasks.reverse
   }
 
+  override def saveTask(task: Task): Unit = {
+
+  }
+
+  override def addFromSavedTasks(task: Task): Unit = {
+    val statement = connection.prepareStatement("INSERT INTO tasks VALUE (?, ?, ?)")
+
+    statement.setString(1, task.title)
+    statement.setString(2, task.description)
+    statement.setString(3, task.id)
+
+    statement.execute()
+  }
 }
 
 
