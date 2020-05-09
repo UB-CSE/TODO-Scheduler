@@ -51,10 +51,17 @@ class Database extends DatabaseAPI{
       val title = result.getString("title")
       val description = result.getString("description")
       val id = result.getString("id")
-      tasks = new Task(title, description, id) :: tasks
+      val priority = result.getString("priority")
+      val dueDate = result.getString("dueDate")
+      tasks = new Task(title, description, id, priority, dueDate) :: tasks
     }
 
     tasks.reverse
+  }
+
+  override def sortTasks(sortType: String): Unit = {}
+  override def singleTask(TaskId: String): Task={
+    new Task("title","description","id","priority","dueDate")
   }
 
 }
