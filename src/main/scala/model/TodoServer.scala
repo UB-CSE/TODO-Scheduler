@@ -4,6 +4,7 @@ import com.corundumstudio.socketio.listener.{ConnectListener, DataListener}
 import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, SocketIOServer}
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
+import java.util.Calendar
 
 
 class TodoServer() {
@@ -18,6 +19,7 @@ class TodoServer() {
 
   var usernameToSocket: Map[String, SocketIOClient] = Map()
   var socketToUsername: Map[SocketIOClient, String] = Map()
+  var finishedTasks: List[Task] = List()
 
   val config: Configuration = new Configuration {
     setHostname("0.0.0.0")
@@ -45,6 +47,46 @@ class TodoServer() {
     }
   }
 
+  def getTime: String = {
+    val today = Calendar.getInstance()
+    val currentDate: String = today.get(Calendar.DATE) + " " + getMonth(today.get(Calendar.MONTH)) + " " + today.get(Calendar.YEAR)
+    var currentTime: String = ""
+
+    val times: List[Int] = List(today.get(Calendar.HOUR_OF_DAY), today.get(Calendar.MINUTE), today.get(Calendar.SECOND))
+    var count: Int = 0
+    for (i <- times) {
+      if (i < 10) {
+        currentTime += "0" + i
+      }
+      else {
+        currentTime += i
+      }
+      count += 1
+      if (count < 3) {
+        currentTime += ":"
+      }
+    }
+
+    currentDate + " " + currentTime
+  }
+
+  def getMonth (theMonth: Int): String = {
+    val allMonths: Map[Int, String] =
+      Map(0 -> "Jan",
+        1 -> "Feb",
+        2 -> "Mar",
+        3 -> "Apr",
+        4 -> "May",
+        5 -> "Jun",
+        6 -> "Jul",
+        7 -> "Aug",
+        8 -> "Sep",
+        9 -> "Oct",
+        10 -> "Nov",
+        11 -> "Dec")
+    allMonths.getOrElse(theMonth, "no")
+  }
+
 }
 
 object TodoServer {
@@ -57,6 +99,8 @@ object TodoServer {
 class ConnectionListener(server: TodoServer) extends ConnectListener {
 
   override def onConnect(socket: SocketIOClient): Unit = {
+    val tasksJSON: List[JsValue] = server.finishedTasks.map((entry: Task) => entry.asJsValue())
+    socket.sendEvent("complete", Json.stringify(Json.toJson(tasksJSON)))
     socket.sendEvent("all_tasks", server.tasksJSON())
   }
 
@@ -70,7 +114,7 @@ class AddTaskListener(server: TodoServer) extends DataListener[String] {
     val title: String = (task \ "title").as[String]
     val description: String = (task \ "description").as[String]
 
-    server.database.addTask(Task(title, description))
+    server.database.addTask(Task(title, description, server.getTime))
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
   }
 
@@ -80,10 +124,18 @@ class AddTaskListener(server: TodoServer) extends DataListener[String] {
 class CompleteTaskListener(server: TodoServer) extends DataListener[String] {
 
   override def onData(socket: SocketIOClient, taskId: String, ackRequest: AckRequest): Unit = {
+    for (task <- server.database.getTasks) {
+      if (task.id == taskId) {
+        server.finishedTasks = new Task(task.title, task.description, "-" + task.id, server.getTime) :: server.finishedTasks
+      }
+    }
+
+    val tasksJSON: List[JsValue] = server.finishedTasks.map((entry: Task) => entry.asJsValue())
+
     server.database.completeTask(taskId)
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
+    server.server.getBroadcastOperations.sendEvent("complete", Json.stringify(Json.toJson(tasksJSON)))
   }
 
 }
-
 
