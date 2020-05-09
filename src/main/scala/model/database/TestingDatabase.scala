@@ -21,4 +21,6 @@ class TestingDatabase extends DatabaseAPI {
     data.reverse
   }
 
+  override def addTemp(task: Task): Unit = Unit
+
 }
