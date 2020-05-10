@@ -38,6 +38,12 @@ class TodoServer() {
     Json.stringify(Json.toJson(tasksJSON))
   }
 
+  def completeTasksJSON(): String = {
+    val tasks: List[Task] = database.getCompleteTasks
+    val tasksJSON: List[JsValue] = tasks.map((entry: Task) => entry.asJsValue())
+    Json.stringify(Json.toJson(tasksJSON))
+  }
+
   def setNextId(): Unit = {
     val tasks = database.getTasks
     if (tasks.nonEmpty) {
@@ -82,6 +88,7 @@ class CompleteTaskListener(server: TodoServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, taskId: String, ackRequest: AckRequest): Unit = {
     server.database.completeTask(taskId)
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
+    server.server.getBroadcastOperations.sendEvent("complete_tasks", server.completeTasksJSON())
   }
 
 }

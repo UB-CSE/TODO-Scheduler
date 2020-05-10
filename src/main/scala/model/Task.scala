@@ -1,5 +1,7 @@
 package model
 
+import java.util.Calendar
+
 import play.api.libs.json.{JsValue, Json}
 
 
@@ -21,19 +23,23 @@ object Task {
   def apply(title: String, description: String): Task = {
     val thisId = nextId
     nextId += 1
-    new Task(cleanString(title), cleanString(description, 1000), thisId.toString)
+    val setup = Calendar.getInstance()
+    val currentTime = setup.getTime
+    new Task(cleanString(title), cleanString(description, 1000), thisId.toString, currentTime.toString,"")
   }
 
 
 }
 
-class Task(val title: String, val description: String, val id: String) {
+class Task(val title: String, val description: String, val id: String, val started: String, var ending: String) {
 
   def asJsValue(): JsValue ={
     val taskMap: Map[String, JsValue] = Map(
       "title" -> Json.toJson(title),
       "description" -> Json.toJson(description),
-      "id" -> Json.toJson(id)
+      "id" -> Json.toJson(id),
+      "time" -> Json.toJson(started),
+      "endTime" -> Json.toJson(ending)
     )
     Json.toJson(taskMap)
   }
