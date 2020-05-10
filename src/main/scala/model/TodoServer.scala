@@ -34,7 +34,16 @@ class TodoServer() {
 
   def tasksJSON(): String = {
     val tasks: List[Task] = database.getTasks
-    val tasksJSON: List[JsValue] = tasks.map((entry: Task) => entry.asJsValue())
+
+    val comparator : (Task,Task) => Boolean = (a: Task , b: Task) => {
+      a.deadline.split("-")(0).toInt < b.deadline.split("-")(0).toInt ||
+        a.deadline.split("-")(1).toInt <  b.deadline.split("-")(1).toInt ||
+        a.deadline.split("-")(2).toInt <  b.deadline.split("-")(2).toInt
+    }
+
+    val sortedTasks: List[Task] = tasks.sortBy(_.deadline).sortWith(comparator)
+    val tasksJSON: List[JsValue] = sortedTasks.map((entry: Task) => entry.asJsValue())
+
     Json.stringify(Json.toJson(tasksJSON))
   }
 
@@ -66,11 +75,12 @@ class ConnectionListener(server: TodoServer) extends ConnectListener {
 class AddTaskListener(server: TodoServer) extends DataListener[String] {
 
   override def onData(socket: SocketIOClient, taskJSON: String, ackRequest: AckRequest): Unit = {
-    val task: JsValue = Json.parse(taskJSON)
-    val title: String = (task \ "title").as[String]
-    val description: String = (task \ "description").as[String]
+    val task: Map[String,JsValue] = Json.parse(taskJSON).as[Map[String,JsValue]]
+    val title: String = (task("title")).as[String]
+    val description: String = (task("description")).as[String]
+    val deadline : String = (task("deadline")).as[String]
 
-    server.database.addTask(Task(title, description))
+    server.database.addTask(Task(title, description, deadline))
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
   }
 
