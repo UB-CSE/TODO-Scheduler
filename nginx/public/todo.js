@@ -2,6 +2,7 @@ const socket = io.connect("http://localhost:8080", {transports: ['websocket']});
 
 socket.on('all_tasks', displayTasks);
 socket.on('message', displayMessage);
+socket.on('complete_tasks', completedTasks);
 
 function displayMessage(newMessage) {
     document.getElementById("message").innerHTML = newMessage;
@@ -12,12 +13,22 @@ function displayTasks(tasksJSON) {
     let formattedTasks = "";
     for (const task of tasks) {
         formattedTasks += "<hr/>";
-        formattedTasks += "<b>" + task['title'] + "</b> - " + task['description'] + "<br/>";
+        formattedTasks += "<b>" + task['title'] + "</b> - " + task['description'] + "<br/>" + task['time'] + "<br/>";
         formattedTasks += "<button onclick='completeTask(\"" + task['id'] + "\")'>Task Complete</button>";
     }
     document.getElementById("tasks").innerHTML = formattedTasks;
 }
 
+function completedTasks(tasksJSON) {
+    const tasks = JSON.parse(tasksJSON);
+    let formattedTasks = "";
+    for (const task of tasks) {
+        formattedTasks += "<hr/>";
+        formattedTasks += "<b>" + task['title'] + "</b> - " + task['description'] + "<br/>";
+        formattedTasks += "<b>" + "Task Completed on: " + "</b>"+ task['endTime'];
+    }
+    document.getElementById("complete").innerHTML = formattedTasks;
+}
 
 function addTask() {
     let title = document.getElementById("title").value;
