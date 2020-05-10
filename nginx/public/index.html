@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Office Hours</title>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
 
@@ -14,6 +15,7 @@
 <label for="title">Title: </label><input type="text" id="title"/><br/>
 <label for="desc">Description: </label><input type="text" id="desc"/><br/>
 <label for="deadline">Deadline: </label><input type="text" id="deadline"/><br/>
+<button class="Urgent" id = "urgency" onclick="urgency(this.id);">Urgent</button> <button class="Moderate" id = "urgency" onclick="urgency(this.id);">Moderate</button> <button class="Trivial" id = "urgency" onclick="urgency(this.id);">Trivial</button> <br/>
 <button onclick="addTask();">Add Task</button>
 <br/><br/>
 
