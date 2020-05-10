@@ -33,7 +33,7 @@ class TodoServer() {
   server.start()
 
   def tasksJSON(): String = {
-    val tasks: List[Task] = database.getTasks
+    val tasks: List[Task] = database.getPrioritizedTasks
     val tasksJSON: List[JsValue] = tasks.map((entry: Task) => entry.asJsValue())
     Json.stringify(Json.toJson(tasksJSON))
   }
@@ -69,8 +69,10 @@ class AddTaskListener(server: TodoServer) extends DataListener[String] {
     val task: JsValue = Json.parse(taskJSON)
     val title: String = (task \ "title").as[String]
     val description: String = (task \ "description").as[String]
+    val eta: Int = (task \ "eta").as[String].toInt
+    val priority: Int = (task \ "priority").as[String].toInt
 
-    server.database.addTask(Task(title, description))
+    server.database.addTask(Task(title, description, eta, priority))
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
   }
 
@@ -85,5 +87,6 @@ class CompleteTaskListener(server: TodoServer) extends DataListener[String] {
   }
 
 }
+
 
 
