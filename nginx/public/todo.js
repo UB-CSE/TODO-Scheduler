@@ -21,13 +21,13 @@ function displayTasks(tasksJSON) {
     document.getElementById("tasks").innerHTML = formattedTasks;
 }
 
-let priority = 2;
+let priority = "2";
 
 function addTask() {
     let title = document.getElementById("title").value;
     let desc = document.getElementById("desc").value;
     let deadline = document.getElementById("deadline").value;
-    socket.emit("add_task", JSON.stringify({"title": title, "description": desc, "deadline": deadline, "priority": "2"}));
+    socket.emit("add_task", JSON.stringify({"title": title, "description": desc, "deadline": deadline, "priority": priority}));
     document.getElementById("title").value = "";
     document.getElementById("desc").value = "";
     document.getElementById("deadline").value = "";
@@ -35,7 +35,7 @@ function addTask() {
 }
 
 function urgency(id) {
-    let obj = {"urgent": 1, "moderate": 2, "trivial": 3};
+    let obj = {"urgent": "1", "moderate": "2", "trivial": "3"};
     priority = obj[id]
 }
 
