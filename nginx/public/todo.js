@@ -10,9 +10,11 @@ function displayMessage(newMessage) {
 function displayTasks(tasksJSON) {
     const tasks = JSON.parse(tasksJSON);
     let formattedTasks = "";
+    let d = new Date();
     for (const task of tasks) {
         formattedTasks += "<hr/>";
-        formattedTasks += "<b>" + task['title'] + "</b> - " + task['description'] + "<br/>";
+        formattedTasks += "<b>" + task['title'] + "</b> - " + task['description'] + "<br/>" + "Need done by: " + task['deadline'] + "<br/>";
+        formattedTasks += "Created on " + d.toLocaleDateString() + " at the time of " + d.toLocaleTimeString() + "<br/>";
         formattedTasks += "<button onclick='completeTask(\"" + task['id'] + "\")'>Task Complete</button>";
     }
     document.getElementById("tasks").innerHTML = formattedTasks;
@@ -22,9 +24,11 @@ function displayTasks(tasksJSON) {
 function addTask() {
     let title = document.getElementById("title").value;
     let desc = document.getElementById("desc").value;
-    socket.emit("add_task", JSON.stringify({"title": title, "description": desc}));
+    let deadline = document.getElementById("deadline").value;
+    socket.emit("add_task", JSON.stringify({"title": title, "description": desc, "deadline": deadline}));
     document.getElementById("title").value = "";
     document.getElementById("desc").value = "";
+    document.getElementById("deadline").value = "";
 }
 
 function completeTask(taskId) {
