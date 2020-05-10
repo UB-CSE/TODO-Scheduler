@@ -27,6 +27,14 @@ function addTask() {
     document.getElementById("desc").value = "";
 }
 
+function addColor() {
+    let title = document.getElementById("title").value;
+    let desc = "&lt;mark&gt; " + document.getElementById("desc").value + " &lt;/mark&gt;";
+    socket.emit("add_task", JSON.stringify({"title": title, "description": desc}));
+    document.getElementById("title").value = "";
+    document.getElementById("desc").value = "";
+}
+
 function completeTask(taskId) {
     socket.emit("complete_task", taskId);
 }

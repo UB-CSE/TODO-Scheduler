@@ -12,6 +12,9 @@ object Task {
       .replace("&", "&amp;")
       .replace("<", "&lt;")
       .replace(">", "&gt;")
+      .replace("&amp;", "&")
+      .replace("&lt;", "<")
+      .replace("&gt;", ">")
     if (output.length > maxLength) {
       output = output.slice(0, maxLength) + "..."
     }
