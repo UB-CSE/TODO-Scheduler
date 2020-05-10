@@ -9,11 +9,8 @@ class Database extends DatabaseAPI{
 
   val url = "jdbc:mysql://localhost/mysql?serverTimezone=UTC"
 
-  val username: String = "root"
-
-//    sys.env("DB_USERNAME")
-  val password: String = "ayushira"
-//    sys.env("DB_PASSWORD")
+  val username: String = sys.env("DB_USERNAME")
+  val password: String = sys.env("DB_PASSWORD")
 
   var connection: Connection = DriverManager.getConnection(url, username, password)
   setupTable()
