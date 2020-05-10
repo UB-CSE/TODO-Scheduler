@@ -13,6 +13,8 @@ function displayTasks(tasksJSON) {
     for (const task of tasks) {
         formattedTasks += "<hr/>";
         formattedTasks += "<b>" + task['title'] + "</b> - " + task['description'] + "<br/>";
+        formattedTasks += "<b>Due on: </b>" + new Date(task['dueDate']).toDateString() + "<br/>";
+        formattedTasks += "<b>Comment: </b>" + task['comment'] + "<br/>";
         formattedTasks += "<button onclick='completeTask(\"" + task['id'] + "\")'>Task Complete</button>";
     }
     document.getElementById("tasks").innerHTML = formattedTasks;
@@ -22,9 +24,14 @@ function displayTasks(tasksJSON) {
 function addTask() {
     let title = document.getElementById("title").value;
     let desc = document.getElementById("desc").value;
-    socket.emit("add_task", JSON.stringify({"title": title, "description": desc}));
+    let dueDate  = document.getElementById("due").value;
+    let comment = document.getElementById("comment").value;
+    socket.emit("add_task", JSON.stringify({"title": title, "description": desc, "dueDate": dueDate,
+                                                   "comment": comment}));
     document.getElementById("title").value = "";
     document.getElementById("desc").value = "";
+    document.getElementById("due").value = "";
+    document.getElementById("comment").value = "";
 }
 
 function completeTask(taskId) {
