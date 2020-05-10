@@ -5,7 +5,7 @@ import java.sql.{Connection, DriverManager, ResultSet}
 import model.Task
 
 
-class Database extends DatabaseAPI{
+class Database extends DatabaseAPI {
 
   val url = "jdbc:mysql://mysql/todo?autoReconnect=true"
   val username: String = sys.env("DB_USERNAME")
@@ -17,16 +17,25 @@ class Database extends DatabaseAPI{
 
   def setupTable(): Unit = {
     val statement = connection.createStatement()
-    statement.execute("CREATE TABLE IF NOT EXISTS tasks (title TEXT, description TEXT, id TEXT)")
+    statement.execute("CREATE TABLE IF NOT EXISTS tasks (title TEXT, description TEXT, start TEXT, deadline TEXT, tag TEXT, priority TEXT, isPrivate TEXT, username TEXT, id TEXT)")
   }
 
 
   override def addTask(task: Task): Unit = {
-    val statement = connection.prepareStatement("INSERT INTO tasks VALUE (?, ?, ?)")
+    val statement = connection.prepareStatement("INSERT INTO tasks VALUE (?, ?, ?, ?, ?, ?, ?, ?, ?)")
 
     statement.setString(1, task.title)
     statement.setString(2, task.description)
-    statement.setString(3, task.id)
+
+    statement.setString(3, task.startTime)
+    statement.setString(4, task.deadline)
+    statement.setString(5, task.tag)
+    statement.setString(6, task.priority)
+    statement.setString(7, task.isPrivate.toString)
+    statement.setString(8, task.username)
+
+    statement.setString(9, task.id)
+
 
     statement.execute()
   }
@@ -51,7 +60,15 @@ class Database extends DatabaseAPI{
       val title = result.getString("title")
       val description = result.getString("description")
       val id = result.getString("id")
-      tasks = new Task(title, description, id) :: tasks
+
+      val CreatedDate = result.getString("start")
+      val deadline = result.getString("deadline")
+      val tag = result.getString("tag")
+      val priority = result.getString("priority")
+      val isPrivate = result.getString("isPrivate").toBoolean
+      val username = result.getString("username")
+
+      tasks = new Task(title, description, CreatedDate, deadline, tag, priority, isPrivate, username, id) :: tasks
     }
 
     tasks.reverse
