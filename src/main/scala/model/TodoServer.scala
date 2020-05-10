@@ -27,13 +27,15 @@ class TodoServer() {
   val server: SocketIOServer = new SocketIOServer(config)
 
   server.addConnectListener(new ConnectionListener(this))
+
   server.addEventListener("add_task", classOf[String], new AddTaskListener(this))
   server.addEventListener("complete_task", classOf[String], new CompleteTaskListener(this))
 
   server.start()
 
   def tasksJSON(): String = {
-    val tasks: List[Task] = database.getTasks
+    val compareTasks:(Task,Task)=>Boolean=(a:Task,b:Task)=>a.priority.toInt<b.priority.toInt
+    val tasks: List[Task] = (database.getTasks).sortWith(compareTasks)
     val tasksJSON: List[JsValue] = tasks.map((entry: Task) => entry.asJsValue())
     Json.stringify(Json.toJson(tasksJSON))
   }
@@ -69,8 +71,16 @@ class AddTaskListener(server: TodoServer) extends DataListener[String] {
     val task: JsValue = Json.parse(taskJSON)
     val title: String = (task \ "title").as[String]
     val description: String = (task \ "description").as[String]
+    val dateMade: String = (task \ "dateMade").as[String]
 
-    server.database.addTask(Task(title, description))
+    val date_due: String = (task \ "date_due").as[String]
+
+    val priority: String = (task \ "priority").as[String]
+
+
+
+
+    server.database.addTask(Task(title, description,dateMade,date_due,priority))
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
   }
 
