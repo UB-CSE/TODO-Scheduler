@@ -31,10 +31,11 @@ function addTask() {
     document.getElementById("title").value = "";
     document.getElementById("desc").value = "";
     document.getElementById("deadline").value = "";
-    priority = 2
+    priority = "2"
 }
 
 function urgency(id) {
+    console.log(id)
     let obj = {"urgent": "1", "moderate": "2", "trivial": "3"};
     priority = obj[id]
 }
