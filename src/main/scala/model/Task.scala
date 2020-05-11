@@ -1,5 +1,7 @@
 package model
 
+import java.sql.Timestamp
+
 import play.api.libs.json.{JsValue, Json}
 
 
@@ -18,22 +20,24 @@ object Task {
     output
   }
 
-  def apply(title: String, description: String): Task = {
+  def apply(title: String, description: String, t: Long, completed: Boolean): Task = {
     val thisId = nextId
     nextId += 1
-    new Task(cleanString(title), cleanString(description, 1000), thisId.toString)
+    new Task(cleanString(title), cleanString(description, 1000), thisId.toString, t, completed)
   }
 
 
 }
 
-class Task(val title: String, val description: String, val id: String) {
+class Task(val title: String, val description: String, val id: String, t: Long, completed: Boolean) {
 
   def asJsValue(): JsValue ={
     val taskMap: Map[String, JsValue] = Map(
       "title" -> Json.toJson(title),
       "description" -> Json.toJson(description),
-      "id" -> Json.toJson(id)
+      "id" -> Json.toJson(id),
+      "t" -> Json.toJson(t),
+      "completed" -> Json.toJson(completed)
     )
     Json.toJson(taskMap)
   }
