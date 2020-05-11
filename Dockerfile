@@ -31,10 +31,10 @@ WORKDIR /root
 
 
 # Copy all app files into the image
-COPY . .
+COPY pom.xml .
 
-# Download dependancies and build the app
-RUN mvn package
+# Download dependancies ONLY
+RUN mvn dependency:resolve
 
 
 # Allow port 8080 to be accessed from outside the container
@@ -42,6 +42,11 @@ EXPOSE 8080
 
 ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.2.1/wait /wait
 RUN chmod +x /wait
+
+COPY . .
+
+# Build the app
+RUN mvn package
 
 # Run the app
 CMD /wait && java -jar target/todo-scheduler-0.0.1-jar-with-dependencies.jar
