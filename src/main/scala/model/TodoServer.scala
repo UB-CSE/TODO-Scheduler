@@ -29,6 +29,7 @@ class TodoServer() {
   server.addConnectListener(new ConnectionListener(this))
   server.addEventListener("add_task", classOf[String], new AddTaskListener(this))
   server.addEventListener("complete_task", classOf[String], new CompleteTaskListener(this))
+  server.addEventListener("register", classOf[String], new RegisterListener(this))
 
   server.start()
 
@@ -86,4 +87,12 @@ class CompleteTaskListener(server: TodoServer) extends DataListener[String] {
 
 }
 
+class RegisterListener(server: TodoServer) extends DataListener[String] {
+
+  override def onData(socketIOClient: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
+    server.usernameToSocket += (username -> socketIOClient)
+    server.socketToUsername += (socketIOClient -> username)
+
+  }
+}
 
