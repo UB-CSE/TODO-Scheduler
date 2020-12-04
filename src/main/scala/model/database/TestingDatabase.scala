@@ -16,9 +16,12 @@ class TestingDatabase extends DatabaseAPI {
     data = data.filter(_.id != taskId)
   }
 
+  def sortByPriority(a: Task, b: Task): Boolean = {
+    a.priority > b.priority
+  }
 
   override def getTasks: List[Task] = {
-    data.reverse
+    data.sortWith(sortByPriority)
   }
 
 }

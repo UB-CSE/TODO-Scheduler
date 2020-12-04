@@ -69,9 +69,18 @@ class AddTaskListener(server: TodoServer) extends DataListener[String] {
     val task: JsValue = Json.parse(taskJSON)
     val title: String = (task \ "title").as[String]
     val description: String = (task \ "description").as[String]
+    val priority: String = (task \ "priority").as[String]
 
-    server.database.addTask(Task(title, description))
-    server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
+    if (priority.matches("""-?[0-9]*(?:\.[0-9]+)?""")) {
+      server.database.addTask(Task(title, description, priority))
+      server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
+      server.server.getBroadcastOperations.sendEvent("clear_priority_error")
+    }
+
+    else {
+      server.server.getBroadcastOperations.sendEvent("priority_error")
+    }
+
   }
 
 }
