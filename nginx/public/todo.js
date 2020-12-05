@@ -2,6 +2,11 @@ const socket = io.connect("http://localhost:8080", {transports: ['websocket']});
 
 socket.on('all_tasks', displayTasks);
 socket.on('message', displayMessage);
+socket.on('warning_message', displayWarning);
+
+function displayWarning (data) {
+    alert(data)
+}
 
 function displayMessage(newMessage) {
     document.getElementById("message").innerHTML = newMessage;
