@@ -70,8 +70,13 @@ class AddTaskListener(server: TodoServer) extends DataListener[String] {
     val title: String = (task \ "title").as[String]
     val description: String = (task \ "description").as[String]
 
-    server.database.addTask(Task(title, description))
-    server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
+    if(title == "" || description == "") {
+      socket.sendEvent("warning_message", "You should fill out both input boxes!!! >:(")
+    }else {
+      server.database.addTask(Task(title, description))
+      server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
+    }
+
   }
 
 }
