@@ -9,6 +9,7 @@ class TestingDatabase extends DatabaseAPI {
 
   override def addTask(task: Task): Unit = {
     data ::= task
+    data = data.sortWith((A, B) => A.priority < B.priority)
   }
 
 
