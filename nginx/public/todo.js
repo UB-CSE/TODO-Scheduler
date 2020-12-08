@@ -22,9 +22,11 @@ function displayTasks(tasksJSON) {
 function addTask() {
     let title = document.getElementById("title").value;
     let desc = document.getElementById("desc").value;
-    socket.emit("add_task", JSON.stringify({"title": title, "description": desc}));
+    let prior = document.getElementById("priority").value;
+    socket.emit("add_task", JSON.stringify({"title": title, "description": desc, "priority": prior}));
     document.getElementById("title").value = "";
     document.getElementById("desc").value = "";
+    document.getElementById("priority").value = "";
 }
 
 function completeTask(taskId) {
