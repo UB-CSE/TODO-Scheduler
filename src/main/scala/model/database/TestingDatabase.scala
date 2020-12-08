@@ -18,7 +18,7 @@ class TestingDatabase extends DatabaseAPI {
 
 
   override def getTasks: List[Task] = {
-    data.reverse
+    data.sortBy(_.label)
   }
 
 }
