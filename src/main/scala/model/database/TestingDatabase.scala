@@ -1,5 +1,7 @@
 package model.database
 
+import java.sql.{Connection, DriverManager, ResultSet}
+
 import model.Task
 
 class TestingDatabase extends DatabaseAPI {
@@ -8,6 +10,7 @@ class TestingDatabase extends DatabaseAPI {
 
 
   override def addTask(task: Task): Unit = {
+
     data ::= task
   }
 
@@ -18,6 +21,7 @@ class TestingDatabase extends DatabaseAPI {
 
 
   override def getTasks: List[Task] = {
+
     data.reverse
   }
 
