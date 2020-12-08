@@ -12,7 +12,7 @@ function displayTasks(tasksJSON) {
     let formattedTasks = "";
     for (const task of tasks) {
         formattedTasks += "<hr/>";
-        formattedTasks += "<b>" + task['title'] + "</b> - " + task['description'] + "<br/>";
+        formattedTasks += "<b>" + task['title'] + "</b> - " + task['description'] + "</b> - " + task['label'] + "<br/>";
         formattedTasks += "<button onclick='completeTask(\"" + task['id'] + "\")'>Task Complete</button>";
     }
     document.getElementById("tasks").innerHTML = formattedTasks;
@@ -22,9 +22,11 @@ function displayTasks(tasksJSON) {
 function addTask() {
     let title = document.getElementById("title").value;
     let desc = document.getElementById("desc").value;
-    socket.emit("add_task", JSON.stringify({"title": title, "description": desc}));
+    let label = document.getElementById("label").value;
+    socket.emit("add_task", JSON.stringify({"title": title, "description": desc, "label": label}));
     document.getElementById("title").value = "";
     document.getElementById("desc").value = "";
+    document.getElementById("label").value = "";
 }
 
 function completeTask(taskId) {
