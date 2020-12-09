@@ -5,6 +5,8 @@ import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, S
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
 
+import java.text.SimpleDateFormat
+
 
 class TodoServer() {
 
@@ -69,8 +71,10 @@ class AddTaskListener(server: TodoServer) extends DataListener[String] {
     val task: JsValue = Json.parse(taskJSON)
     val title: String = (task \ "title").as[String]
     val description: String = (task \ "description").as[String]
+    val currentTime: String = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(System.currentTimeMillis())
 
-    server.database.addTask(Task(title, description))
+
+    server.database.addTask(Task(title, description, currentTime))
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
   }
 

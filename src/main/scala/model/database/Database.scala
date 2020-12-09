@@ -50,8 +50,9 @@ class Database extends DatabaseAPI{
     while (result.next()) {
       val title = result.getString("title")
       val description = result.getString("description")
+      val created = result.getString("created")
       val id = result.getString("id")
-      tasks = new Task(title, description, id) :: tasks
+      tasks = new Task(title, description, created, id) :: tasks
     }
 
     tasks.reverse
