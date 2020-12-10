@@ -1,5 +1,6 @@
 package model
 
+import model.Task.cleanString
 import play.api.libs.json.{JsValue, Json}
 
 
@@ -18,22 +19,26 @@ object Task {
     output
   }
 
-  def apply(title: String, description: String): Task = {
+  def apply(title: String, description: String, deadline: String, createdDate: String): Task = {
     val thisId = nextId
     nextId += 1
-    new Task(cleanString(title), cleanString(description, 1000), thisId.toString)
+    new Task(cleanString(title), cleanString(description, 1000), thisId.toString,
+      cleanString(deadline), cleanString(createdDate))
   }
 
 
 }
 
-class Task(val title: String, val description: String, val id: String) {
+class Task(val title: String, val description: String, val id: String, val deadline: String,
+           val createdDate: String) {
 
   def asJsValue(): JsValue ={
     val taskMap: Map[String, JsValue] = Map(
       "title" -> Json.toJson(title),
       "description" -> Json.toJson(description),
-      "id" -> Json.toJson(id)
+      "id" -> Json.toJson(id),
+      "deadline" -> Json.toJson(deadline),
+      "createdDate" -> Json.toJson(createdDate)
     )
     Json.toJson(taskMap)
   }
