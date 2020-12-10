@@ -2,17 +2,52 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Office Hours</title>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <style>
+        body {background-color: #daf3d5;}
+        table, th, td {
+            border: 2px solid #055b39;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+        }
+        label{
+            color:#077a4d;
+            font-size:20px;
+            font-family:garamond,serif;
+        }
+        button{
+            color:#077a4d;
+            font-size:15px;
+            font-family:garamond,serif;
+        }
+        h3 {
+            color:#055b39;
+            font-size:35px;
+            font-family:garamond,serif;
+        }
+    </style>
 </head>
 <body>
 
-<br/>
 
+<br/>
 <h3 id="message">Welcome!</h3>
 
-<label for="title">Title: </label><input type="text" id="title"/><br/>
-<label for="desc">Description: </label><input type="text" id="desc"/><br/>
+<table style="width:25%;">
+    <tr>
+        <th><label for="title">Task Name: </label></th>
+        <th><input type="text" id="title"/><br/></th>
+    </tr>
+    <tr>
+        <th><label for="desc">Description: </label></th>
+        <th><input type="text" id="desc"/><br/></th>
+    </tr>
+</table>
+<br/>
 <button onclick="addTask();">Add Task</button>
 <br/><br/>
 
