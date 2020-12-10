@@ -12,8 +12,10 @@ function displayTasks(tasksJSON) {
     let formattedTasks = "";
     for (const task of tasks) {
         formattedTasks += "<hr/>";
-        formattedTasks += "<b>" + task['title'] + "</b> - " + task['description'] + "<br/>";
-        formattedTasks += "<button onclick='completeTask(\"" + task['id'] + "\")'>Task Complete</button>";
+        formattedTasks += "<b>" + task['title'] + "</b> : " + "<br/>";
+        formattedTasks += "<br> - " + task['description'] + "<br/>";
+        formattedTasks += "<br>";
+        formattedTasks += "<button style=\"color:#000000;font-size:15px;font-family:garamond,serif;\" onclick='completeTask(\"" + task['id'] + "\")'>Task Complete</button>";
     }
     document.getElementById("tasks").innerHTML = formattedTasks;
 }
