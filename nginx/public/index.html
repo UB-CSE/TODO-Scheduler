@@ -5,15 +5,17 @@
     <title>Office Hours</title>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 </head>
-<body>
+<body style="background-color: antiquewhite">
 
 <br/>
 
-<h3 id="message">Welcome!</h3>
+<h3 style="font-size: 30px" id="message">Welcome!</h3>
+<p style="font-size: 20px">Add Tasks Below: </p>
 
-<label for="title">Title: </label><input type="text" id="title"/><br/>
-<label for="desc">Description: </label><input type="text" id="desc"/><br/>
-<button onclick="addTask();">Add Task</button>
+<label style="font-size: 15px" for="title">Title: </label><input type="text" id="title"/><br/>
+<label style="font-size: 15px" for="desc">Description: </label><input type="text" id="desc"/><br/>
+<label style="font-size: 15px" for="deadline">Deadline: </label><input type="text" id="deadline"><br/>
+<button style="background-color: darkgray; color: azure" onclick="addTask();">Add Task</button>
 <br/><br/>
 
 <div id="tasks"></div>
