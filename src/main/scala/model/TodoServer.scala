@@ -26,6 +26,8 @@ class TodoServer() {
 
   val server: SocketIOServer = new SocketIOServer(config)
 
+  val authentication: Boolean = false
+
   server.addConnectListener(new ConnectionListener(this))
   server.addEventListener("add_task", classOf[String], new AddTaskListener(this))
   server.addEventListener("complete_task", classOf[String], new CompleteTaskListener(this))
@@ -69,8 +71,9 @@ class AddTaskListener(server: TodoServer) extends DataListener[String] {
     val task: JsValue = Json.parse(taskJSON)
     val title: String = (task \ "title").as[String]
     val description: String = (task \ "description").as[String]
+    val time: String = (task \ "time").as[String]
 
-    server.database.addTask(Task(title, description))
+    server.database.addTask(Task(title, description, time))
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
   }
 
@@ -85,5 +88,3 @@ class CompleteTaskListener(server: TodoServer) extends DataListener[String] {
   }
 
 }
-
-
