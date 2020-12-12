@@ -1,5 +1,8 @@
 package model
 
+import java.text.SimpleDateFormat
+import java.util.Calendar
+
 import play.api.libs.json.{JsValue, Json}
 
 
@@ -21,7 +24,11 @@ object Task {
   def apply(title: String, description: String): Task = {
     val thisId = nextId
     nextId += 1
-    new Task(cleanString(title), cleanString(description, 1000), thisId.toString)
+
+    val format = new SimpleDateFormat(" '[Created on' EEE, MMM dd 'at' hh:mm aa']'")
+    val dateCreated = format.format(Calendar.getInstance().getTime())
+
+    new Task(cleanString(title), cleanString(description, 1000) + dateCreated, thisId.toString)
   }
 
 
