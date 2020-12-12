@@ -69,8 +69,8 @@ class AddTaskListener(server: TodoServer) extends DataListener[String] {
     val task: JsValue = Json.parse(taskJSON)
     val title: String = (task \ "title").as[String]
     val description: String = (task \ "description").as[String]
-
-    server.database.addTask(Task(title, description))
+    val ddl : String = (task \ "ddl").as[String]
+    server.database.addTask(Task(title,description,ddl))
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
   }
 
