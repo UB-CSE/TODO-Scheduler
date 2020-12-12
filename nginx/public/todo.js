@@ -8,8 +8,10 @@ function displayMessage(newMessage) {
 }
 
 function displayTasks(tasksJSON) {
-    const tasks = JSON.parse(tasksJSON);
-    console.log(tasks)
+    const sortMode = document.getElementById("sort-by").value;
+    const sortFunction = (sortMode === "priority" ? comparePriority : compareId)
+    var tasks = JSON.parse(tasksJSON);
+    tasks.sort(sortFunction);
     let formattedTasks = "";
     for (const task of tasks) {
         formattedTasks += "<hr/>";
@@ -20,12 +22,16 @@ function displayTasks(tasksJSON) {
     document.getElementById("tasks").innerHTML = formattedTasks;
 }
 
-function getPriority(jsonObj) {
-    return jsonObj.priority
+function refreshTasks() {
+    socket.emit("get_tasks")
 }
 
-function getId(jsonObj) {
-    return parseInt(jsonObj.id)
+function comparePriority(jsonObj1, jsonObj2) {
+    return parseInt(jsonObj2['priority']) - parseInt(jsonObj1['priority'])
+}
+
+function compareId(jsonObj1, jsonObj2) {
+    return parseInt(jsonObj2['id']) - parseInt(jsonObj1['id'])
 }
 
 function addTask() {
