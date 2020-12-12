@@ -1,5 +1,6 @@
 package model
 
-class Friday {
+//Friday
+class Friday(input: DaysOfTheWeek) extends State(input) {
 
 }

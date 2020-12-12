@@ -1,5 +1,6 @@
 package model
 
+//States
 abstract class State(input: DaysOfTheWeek) {
   def Sunday()
   def Monday()

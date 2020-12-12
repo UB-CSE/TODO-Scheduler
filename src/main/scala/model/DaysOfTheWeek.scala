@@ -1,5 +1,6 @@
 package model
 
+//Switches States
 class DaysOfTheWeek {
   var state: State = new Schedular(this)
   def Sunday(): Unit ={
