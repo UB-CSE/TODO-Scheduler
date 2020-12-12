@@ -1,6 +1,6 @@
 package model
 
-object Configuration {
+object ModelConfiguration {
 
   val DEV_MODE = true
 
