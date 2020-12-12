@@ -44,6 +44,7 @@ class TodoServer() {
       Task.nextId = tasks.map(_.id.toInt).max + 1
     }
   }
+  //Testing
 
 }
 
@@ -69,8 +70,9 @@ class AddTaskListener(server: TodoServer) extends DataListener[String] {
     val task: JsValue = Json.parse(taskJSON)
     val title: String = (task \ "title").as[String]
     val description: String = (task \ "description").as[String]
+    val deadline: String = (task \ "deadline").as[String]
 
-    server.database.addTask(Task(title, description))
+    server.database.addTask(Task(title, description, deadline))
     server.server.getBroadcastOperations.sendEvent("all_tasks", server.tasksJSON())
   }
 
