@@ -22,11 +22,12 @@ class Database extends DatabaseAPI{
 
 
   override def addTask(task: Task): Unit = {
-    val statement = connection.prepareStatement("INSERT INTO tasks VALUE (?, ?, ?)")
+    val statement = connection.prepareStatement("INSERT INTO tasks VALUE (?, ?, ?, ?)")
 
     statement.setString(1, task.title)
     statement.setString(2, task.description)
-    statement.setString(3, task.id)
+    statement.setString(3, task.comment)
+    statement.setString(4, task.id)
 
     statement.execute()
   }
@@ -50,8 +51,9 @@ class Database extends DatabaseAPI{
     while (result.next()) {
       val title = result.getString("title")
       val description = result.getString("description")
+      val comment = result.getString("comment")
       val id = result.getString("id")
-      tasks = new Task(title, description, id) :: tasks
+      tasks = new Task(title, description, comment, id) :: tasks
     }
 
     tasks.reverse
