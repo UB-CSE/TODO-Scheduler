@@ -34,14 +34,25 @@ function compareId(jsonObj1, jsonObj2) {
     return parseInt(jsonObj2['id']) - parseInt(jsonObj1['id'])
 }
 
+function clearError() {
+    document.getElementById("error-message").innerHTML = ""
+}
+
 function addTask() {
     let title = document.getElementById("title").value;
     let desc = document.getElementById("desc").value;
-    let priority = parseInt(document.getElementById("priority").value);
-    socket.emit("add_task", JSON.stringify({"title": title, "description": desc, "priority": priority}));
-    document.getElementById("title").value = "";
-    document.getElementById("desc").value = "";
-    document.getElementById("priority").value = "";
+    var priority = document.getElementById("priority").value;
+    if (/^(\d+)$/.test(priority)) {
+        document.getElementById("error-message").innerHTML = ""
+        priority = parseInt(priority)
+        socket.emit("add_task", JSON.stringify({"title": title, "description": desc, "priority": priority}));
+        document.getElementById("title").value = "";
+        document.getElementById("desc").value = "";
+        document.getElementById("priority").value = "";
+    }
+    else {
+        document.getElementById("error-message").innerHTML = "Invalid form input."
+    }
 }
 
 function completeTask(taskId) {
