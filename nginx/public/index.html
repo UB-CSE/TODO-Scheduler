@@ -10,9 +10,30 @@
 <br/>
 
 <h3 id="message">Welcome!</h3>
-
 <label for="title">Title: </label><input type="text" id="title"/><br/>
-<label for="desc">Description: </label><input type="text" id="desc"/><br/>
+<label for="name">Name:</label><input type="text" id="name"/><br/>
+<label for="email">Email:</label><input type="text" id="email"/><br/>
+<form action="">
+    <label for="LO">Learning Objective:</label>
+    <select name="LO" id="LO">
+        <option value="LO1">1: Program Execution</option>
+        <option value="LO2">2: Object-Oriented Programming (OOP)</option>
+        <option value="LO3">3: Functional Programming (FP)</option>
+        <option value="LO4">4: Data Structures & Algorithms</option>
+        <option value="LO5">5: Event-Based Architectures</option>
+    </select>
+</form>
+<form action="/">
+    <label for="date">Date/Time:</label>
+    <input type="datetime-local" id="date" name="date">
+</form>
+<br>
+<label for="desc">Description: </label>
+<br>
+<textarea id="desc" name="description" rows="4" cols="50">
+
+  </textarea>
+<br>
 <button onclick="addTask();">Add Task</button>
 <br/><br/>
 
