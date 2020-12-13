@@ -40,6 +40,11 @@ class Database extends DatabaseAPI{
     statement.execute()
   }
 
+  override def getLastTaskId: Int = {
+    val statement = connection.prepareStatement("SELECT LAST() FROM tasks")
+    val result: ResultSet = statement.executeQuery()
+    result.getString("id").toInt
+  }
 
   override def getTasks: List[Task] = {
     val statement = connection.prepareStatement("SELECT * FROM tasks")
