@@ -57,6 +57,7 @@ class Database extends DatabaseAPI{
     tasks.reverse
   }
 
+  override def addSubTask(id: String, description: String): Unit = ???
 }
 
 
