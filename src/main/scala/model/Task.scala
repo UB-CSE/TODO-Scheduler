@@ -29,11 +29,13 @@ object Task {
 
 class Task(val title: String, val description: String, val id: String) {
 
-  def asJsValue(): JsValue ={
+  var subs: List[String] = List()
+  def asJsValue(): JsValue = {
     val taskMap: Map[String, JsValue] = Map(
       "title" -> Json.toJson(title),
       "description" -> Json.toJson(description),
-      "id" -> Json.toJson(id)
+      "id" -> Json.toJson(id),
+      "subTasks" -> Json.toJson(subs)
     )
     Json.toJson(taskMap)
   }
