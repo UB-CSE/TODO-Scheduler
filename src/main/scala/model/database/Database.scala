@@ -17,7 +17,7 @@ class Database extends DatabaseAPI{
 
   def setupTable(): Unit = {
     val statement = connection.createStatement()
-    statement.execute("CREATE TABLE IF NOT EXISTS tasks (title TEXT, description TEXT, id TEXT)")
+    statement.execute("CREATE TABLE IF NOT EXISTS tasks (title TEXT, description TEXT, id TEXT, due_Date TEXT)")
   }
 
 
@@ -27,7 +27,7 @@ class Database extends DatabaseAPI{
     statement.setString(1, task.title)
     statement.setString(2, task.description)
     statement.setString(3, task.id)
-
+    statement.setString(4, task.due_Date )
     statement.execute()
   }
 
@@ -51,7 +51,8 @@ class Database extends DatabaseAPI{
       val title = result.getString("title")
       val description = result.getString("description")
       val id = result.getString("id")
-      tasks = new Task(title, description, id) :: tasks
+      val date = result.getString("due_Date")
+      tasks = new Task(title, description, id, date) :: tasks
     }
 
     tasks.reverse
