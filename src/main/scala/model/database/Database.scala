@@ -20,8 +20,20 @@ class Database extends DatabaseAPI{
     statement.execute("CREATE TABLE IF NOT EXISTS tasks (title TEXT, description TEXT, id TEXT)")
   }
 
-
   override def addTask(task: Task): Unit = {
+    val statement = connection.prepareStatement("INSERT INTO tasks VALUE (?, ?, ?, ?, ?)")
+
+    statement.setString(1, task.title)
+    statement.setString(2, task.description)
+    statement.setString(3, task.deadline)
+    statement.setString(4, task.comments)
+    statement.setString(5, task.id)
+
+    statement.execute()
+  }
+
+
+/*  override def addTask(task: Task): Unit = {
     val statement = connection.prepareStatement("INSERT INTO tasks VALUE (?, ?, ?)")
 
     statement.setString(1, task.title)
@@ -29,7 +41,8 @@ class Database extends DatabaseAPI{
     statement.setString(3, task.id)
 
     statement.execute()
-  }
+  }*/
+
 
 
   override def completeTask(taskId: String): Unit = {
@@ -50,8 +63,10 @@ class Database extends DatabaseAPI{
     while (result.next()) {
       val title = result.getString("title")
       val description = result.getString("description")
+      val deadline = result.getString("deadline")
+      val comments = result.getString("comments")
       val id = result.getString("id")
-      tasks = new Task(title, description, id) :: tasks
+      tasks = new Task(title, description, deadline, comments, id) :: tasks
     }
 
     tasks.reverse
