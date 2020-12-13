@@ -4,7 +4,9 @@ import model.Task
 
 class TestingDatabase extends DatabaseAPI {
 
-  var data: List[Task] = List()
+  val tskTest: Task = new Task("Test", "testing to see if estimation shows up", "1", "3 hours")
+
+  var data: List[Task] = List(tskTest)
 
 
   override def addTask(task: Task): Unit = {
@@ -20,5 +22,7 @@ class TestingDatabase extends DatabaseAPI {
   override def getTasks: List[Task] = {
     data.reverse
   }
+
+
 
 }
