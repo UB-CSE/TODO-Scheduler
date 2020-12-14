@@ -7,8 +7,8 @@ import model.Task
 
 class Database extends DatabaseAPI{
 
-  val url = "jdbc:mysql://mysql/todo?autoReconnect=true"
-  val username: String = sys.env("DB_USERNAME")
+  val url = "jdbc:mysql://localhost/mysql"
+  val username: String = sys.env("root")
   val password: String = sys.env("DB_PASSWORD")
 
   var connection: Connection = DriverManager.getConnection(url, username, password)
@@ -27,6 +27,7 @@ class Database extends DatabaseAPI{
     statement.setString(1, task.title)
     statement.setString(2, task.description)
     statement.setString(3, task.id)
+    statement.setString(4, task.date)
 
     statement.execute()
   }
@@ -51,7 +52,8 @@ class Database extends DatabaseAPI{
       val title = result.getString("title")
       val description = result.getString("description")
       val id = result.getString("id")
-      tasks = new Task(title, description, id) :: tasks
+      val date = result.getString("date")
+      tasks = new Task(title, description, id, date) :: tasks
     }
 
     tasks.reverse

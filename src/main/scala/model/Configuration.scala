@@ -1,7 +1,7 @@
 package model
 
-object Configuration {
+object zConfiguration {
 
-  val DEV_MODE = true
+  val DEV_MODE = false
 
 }
