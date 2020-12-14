@@ -7,21 +7,30 @@ function displayMessage(newMessage) {
     document.getElementById("message").innerHTML = newMessage;
 }
 
+let BUTTON = "<div class=\"todo\">\n" +
+    "        <h1 style=\"margin: 2% 0 0;\">TITLE</h1>\n" +
+    "        <p>DESCRIPTION</p>\n" +
+    "        <button onclick=\"\" style=\"margin-bottom: 2%; background-color: #7158e2; color: white\">Task Complete</button>\n" +
+    "    </div>"
+
 function displayTasks(tasksJSON) {
     const tasks = JSON.parse(tasksJSON);
-    let formattedTasks = "";
+    let l = ""
     for (const task of tasks) {
-        formattedTasks += "<hr/>";
-        formattedTasks += "<b>" + task['title'] + "</b> - " + task['description'] + "<br/>";
-        formattedTasks += "<button onclick='completeTask(\"" + task['id'] + "\")'>Task Complete</button>";
+        l += "<div class=\"todo\">\n" +
+            "        <h1 style=\"margin: 2% 0 0;\">"+task['title']+"</h1>\n" +
+            "        <p>"+task['description']+"</p>\n" +
+            "        <button onclick=\"completeTask('"+task['id']+"')\" style=\"margin-bottom: 2%; background-color: #4b4b4b; color: white\">Task Complete</button>\n" +
+        "    </div>"
     }
-    document.getElementById("tasks").innerHTML = formattedTasks;
+    document.getElementById("todos").innerHTML = l
+    //document.getElementById("tasks").innerHTML = formattedTasks;
 }
 
 
 function addTask() {
-    let title = document.getElementById("title").value;
-    let desc = document.getElementById("desc").value;
+    let title = document.getElementById("TITLE").value;
+    let desc = document.getElementById("DESC").value;
     socket.emit("add_task", JSON.stringify({"title": title, "description": desc}));
     document.getElementById("title").value = "";
     document.getElementById("desc").value = "";
