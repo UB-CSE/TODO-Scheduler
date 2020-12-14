@@ -1,4 +1,4 @@
-const socket = io.connect("http://localhost:8080", {transports: ['websocket']});
+const socket = io.connect({transports: ['websocket']});
 
 socket.on('all_tasks', displayTasks);
 socket.on('message', displayMessage);
@@ -12,7 +12,7 @@ function displayTasks(tasksJSON) {
     let formattedTasks = "";
     for (const task of tasks) {
         formattedTasks += "<hr/>";
-        formattedTasks += "<b>" + task['title'] + "</b> - " + task['description'] + "<br/>";
+        formattedTasks += "<b>" + task['title'] + "</b> - " + task['description'] + "</b> - " + task['timeEst'] +  "<br/>";
         formattedTasks += "<button onclick='completeTask(\"" + task['id'] + "\")'>Task Complete</button>";
     }
     document.getElementById("tasks").innerHTML = formattedTasks;
