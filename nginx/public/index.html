@@ -4,19 +4,98 @@
     <meta charset="UTF-8">
     <title>Office Hours</title>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <style>
+        html, body {
+            height: 100%;
+            width: 100%;
+            background-color: #4b4b4b;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: "Segoe UI Emoji",serif;
+            color: white;
+        }
+        .parent {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 50%;
+            background-color: #3d3d3d;
+            border-radius: 10px;
+        }
+        .child {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            font-size: 1.5vh;
+        }
+        .todo {
+
+        }
+        button {
+            box-sizing: border-box;
+            border: none;
+            outline: none;
+            border-radius: 5px;
+            font-size: 2vh;
+        }
+        input {
+            box-sizing: border-box;
+            border: none;
+            outline: none;
+            border-radius: 2px;
+            height: 2vh;
+        }
+        #todos {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-evenly;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+        .todo {
+            background-color: #3d3d3d;
+            width: 30%;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .todo p{
+            margin-left: 5%;
+            margin-right: 5%;
+        }
+    </style>
 </head>
 <body>
 
-<br/>
+<div class="parent" id="top" style="font-size: 1.25vh">
+    <h1>Todo List</h1>
+</div>
 
-<h3 id="message">Welcome!</h3>
+<div class="parent" id="entry">
+    <div class="child">
+        <label for="TITLE">Title: </label>
+        <input type="text" id="TITLE">
+    </div>
+    <div class="child">
+        <label for="DESC">Description: </label>
+        <input type="text" id="DESC">
+    </div>
+    <div class="child">
+        <button onclick="addTask()">Submit</button>
+    </div>
+</div>
 
-<label for="title">Title: </label><input type="text" id="title"/><br/>
-<label for="desc">Description: </label><input type="text" id="desc"/><br/>
-<button onclick="addTask();">Add Task</button>
-<br/><br/>
-
-<div id="tasks"></div>
+<div class="parent" id="todos" style="background-color: #4b4b4b">
+    <div class="todo">
+        <h1 style="margin: 2% 0 0;">Title</h1>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sed dapibus augue. Morbi consequat accumsan elit, in lobortis dui. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Interdum et malesuada fames ac ante ipsum primis in faucibus. Donec vulputate tincidunt diam, ornare bibendum tellus. Vivamus mi purus, posuere nec eros at, laoreet hendrerit ex. Cras in ipsum quis libero eleifend rhoncus ac vitae orci. Nam lobortis erat odio, in mollis tellus dapibus et. Aenean molestie, lacus eu venenatis aliquam, lectus risus vulputate lectus, vel eleifend tellus mauris in sem. Morbi sed orci non felis luctus lacinia. Sed consectetur malesuada velit vitae dignissim. Ut tincidunt venenatis ornare.</p>
+        <button onclick="completeTask('')" style="margin-bottom: 2%; background-color: #7158e2; color: white">Task Complete</button>
+    </div>
+</div>
 
 <script src="todo.js"></script>
 
